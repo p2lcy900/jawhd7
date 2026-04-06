@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IAA</title>
+    <style>
+        :root {
+            --bg-color: #000000;
+            --text-color: #ffffff;
+            --font-main: 'Consolas', 'Monaco', 'Lucida Console', 'Courier New', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        img {
+            pointer-events: none;
+        }
+
+        /* Splash Screen for Audio Autoplay Bypass */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        #splash-screen p {
+            font-size: 1.2rem;
+            letter-spacing: 5px;
+            animation: pulse 1.5s infinite;
+            text-transform: uppercase;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
+
+        /* Video Background Overlay */
+        .video-bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: #000;
+            display: none;
+        }
+
+        .video-bg-container iframe {
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            filter: brightness(0.3) contrast(1.2);
+            object-fit: cover;
+        }
+
+        /* Terminal Screen */
+        #terminal-screen {
+            display: none;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 40px;
+            height: 100vh;
+            width: 100vw;
+            background: black;
+            z-index: 100;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .terminal-line {
+            margin-bottom: 4px;
+            font-size: 16px;
+            line-height: 1.4;
+            min-height: 1.4em;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 18px;
+            background: var(--text-color);
+            margin-left: 2px;
+            vertical-align: middle;
+            animation: blink 0.8s infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        /* Profile Screen */
+        #profile-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            width: 100vw;
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(12px);
+            opacity: 0;
+            padding: 20px;
+            perspective: 1000px;
+        }
+
+        .profile-card {
+            background: rgba(17, 18, 20, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
+        }
+
+        .profile-img {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 4px solid #1e1f22;
+            margin-bottom: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            object-fit: cover;
+        }
+
+        .profile-info h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .profile-info .username {
+            font-size: 1.1rem;
+            color: #b5bac1;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .profile-info .join-date {
+            font-size: 0.9rem;
+            color: #949ba4;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .badge-container {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 15px;
+            background: #1e1f22;
+            padding: 10px 20px;
+            border-radius: 12px;
+            flex-wrap: wrap;
+        }
+
+        .badge-icon {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+            transition: transform 0.2s;
+        }
+
+        .badge-icon:hover {
+            transform: scale(1.2);
+        }
+
+        /* Hidden Audio Div */
+        #audio-player {
+            position: fixed;
+            top: -100px;
+            left: -100px;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Splash Screen -->
+    <div id="splash-screen" onclick="initializeProject()">
+        <p>[ CLICK TO INITIALIZE SYSTEM ]</p>
+    </div>
+
+    <!-- YouTube IFrame API Container -->
+    <div id="audio-player"></div>
+
+    <!-- Video Background Container -->
+    <div class="video-bg-container" id="bg-video-container"></div>
+
+    <!-- Terminal Screen -->
+    <div id="terminal-screen">
+        <div id="terminal-content"></div>
+        <div id="cursor-line"><span class="cursor"></span></div>
+    </div>
+
+    <!-- Profile Screen -->
+    <div id="profile-screen">
+        <div class="profile-card">
+            <img src="https://cdn.discordapp.com/attachments/1487634339121594451/1490751768726863995/24380b2fc1c937754e8946f68ce46b80.jpg?ex=69d53246&is=69d3e0c6&hm=9fcbbe1498dc8ecf0ee8b0a8cf6f474b8aa72033fee887de6c94eb30682f43e3&" alt="Profile" class="profile-img" referrerpolicy="no-referrer">
+            <div class="profile-info">
+                <h1>echoes of forgotten souls</h1>
+                <span class="username">@65u5</span>
+                <p class="join-date">Member Since 2016</p>
+                <div class="badge-container">
+                    <img src="https://media.discordapp.net/attachments/1487634339121594451/1490743533391581396/961038-discordstaff.png?ex=69d52a9b&is=69d3d91b&hm=83af72019dd5aff2229d8e7a37c3111e14a490964adc39427d49c864d582c83c&=&format=webp&quality=lossless" title="Discord Staff" class="badge-icon">
+                    <img src="https://media.discordapp.net/attachments/1487634339121594451/1490743559131894032/9765-badge-bugbuster.png?ex=69d52aa1&is=69d3d921&hm=a1f1912c0bb4943c41a46243d4e64b1893d2261a70876175adbd1fba31ca19c2&=&format=webp&quality=lossless" title="Bug Hunter" class="badge-icon">
+                    <img src="https://media.discordapp.net/attachments/1487634339121594451/1490743591767904407/62340-earlysupporter.png?ex=69d52aa8&is=69d3d928&hm=c736c577fe7486eaf12c4c195f30eeb8874a105aa252d2ad72bef59f187bbb1f&=&format=webp&quality=lossless" title="Early Supporter" class="badge-icon">
+                    <img src="https://media.discordapp.net/attachments/1487634339121594451/1490743997856219185/1895-subscriber-nitro-animated.gif?ex=69d52b09&is=69d3d989&hm=23431f7ec25bd1f1fe0ffdad45c06099fb3fe911e1bb01769dc5fda2686a34ce&=" title="Nitro" class="badge-icon">
+                    <img src="https://media.discordapp.net/attachments/1487634339121594451/1490743576152510484/172841-last-meadow-badge.png?ex=69d52aa5&is=69d3d925&hm=b20f061061c788affc27ef8ce85188b9cf41dbc62fbca79ddaf6a76ae774e4f6&=&format=webp&quality=lossless" title="Custom Badge" class="badge-icon">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- YouTube API Script (Optional but good to keep for structure) -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+
+    <script>
+        let player;
+        const videoId = '91GTuZWCQmY'; 
+
+        const terminalContent = document.getElementById('terminal-content');
+        const terminalScreen = document.getElementById('terminal-screen');
+        const profileScreen = document.getElementById('profile-screen');
+        const videoBgContainer = document.getElementById('bg-video-container');
+        const splashScreen = document.getElementById('splash-screen');
+
+        const lines = [
+            { text: "echo you are now root.", delay: 800 },
+            { text: "EchO; OK daddy .", delay: 1000 },
+            { text: "", delay: 500 },
+            { text: "root show echoes of forgotten souls Info.", delay: 800 },
+            { text: "EchO; print( 'Identity,Verified' ).", delay: 600 },
+            { text: ".Hello ,", delay: 300 },
+            { text: ".I'm echoes of forgotten souls", delay: 300 },
+            { text: ".Discord ID: 65u5", delay: 300 },
+            { text: ".Account Creation: 2016", delay: 300 },
+            { text: ".Badges: Staff, Bug Hunter, Early Supporter, Nitro", delay: 300 },
+            { text: "", delay: 500 },
+            { text: "echo Anything else?", delay: 800 },
+            { text: "EchO; System Will Load Profile in 3 Seconds...", delay: 600 },
+            { text: "", delay: 400 },
+            { text: "1", delay: 1000 },
+            { text: "2", delay: 1000 },
+            { text: "3", delay: 1000 }
+        ];
+
+        let lineIndex = 0;
+
+        // Simplified YouTube API Ready Callback
+        function onYouTubeIframeAPIReady() {
+            console.log("YouTube API Loaded");
+        }
+
+        function initializeProject() {
+            splashScreen.style.display = 'none';
+            terminalScreen.style.display = 'flex';
+
+            // Get Origin safely for YouTube API
+            let origin = window.location.origin;
+            if (origin === 'null' || !origin.startsWith('http')) {
+                origin = '*'; // Handle local files
+            }
+
+            // Direct injection of the audio player after user interaction (Most Reliable)
+            const audioDiv = document.getElementById('audio-player');
+            const audioSrc = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&enablejsapi=1&origin=${encodeURIComponent(origin)}`;
+            
+            audioDiv.innerHTML = `<iframe 
+                 id="youtube-player-iframe"
+                 width="640" height="360" 
+                 src="${audioSrc}" 
+                 frameborder="0" 
+                 allow="autoplay; encrypted-media" 
+                 style="position: fixed; top: -1000px; left: -1000px; opacity: 0.01; pointer-events: none;"></iframe>`;
+
+            console.log("Audio Player Injected:", audioSrc);
+
+            typeLine();
+        }
+
+        function typeLine() {
+            if (lineIndex < lines.length) {
+                const lineData = lines[lineIndex];
+                const lineDiv = document.createElement('div');
+                lineDiv.className = 'terminal-line';
+                terminalContent.appendChild(lineDiv);
+                
+                terminalScreen.scrollTop = terminalScreen.scrollHeight;
+
+                let charCount = 0;
+                const text = lineData.text;
+                
+                if (text === "") {
+                    lineIndex++;
+                    setTimeout(typeLine, lineData.delay);
+                    return;
+                }
+
+                const charInterval = setInterval(() => {
+                    if (charCount < text.length) {
+                        lineDiv.textContent += text[charCount];
+                        charCount++;
+                        terminalScreen.scrollTop = terminalScreen.scrollHeight;
+                    } else {
+                        clearInterval(charInterval);
+                        lineIndex++;
+                        setTimeout(typeLine, lineData.delay);
+                    }
+                }, 40);
+            } else {
+                setTimeout(transitionToProfile, 1000);
+            }
+        }
+
+        function transitionToProfile() {
+            terminalScreen.style.transition = "opacity 0.8s ease";
+            terminalScreen.style.opacity = "0";
+            
+            setTimeout(() => {
+                terminalScreen.style.display = "none";
+                videoBgContainer.style.display = "block";
+                profileScreen.style.display = "flex";
+                
+                let origin = window.location.origin;
+                if (origin === 'null' || !origin.startsWith('http')) {
+                    origin = '*';
+                }
+                
+                // Muted background video (Inject after terminal for performance)
+                videoBgContainer.innerHTML = `<iframe 
+                    width="100%" height="100%" 
+                    src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&autohide=1&enablejsapi=1&origin=${encodeURIComponent(origin)}" 
+                    frameborder="0" 
+                    allow="autoplay; encrypted-media"></iframe>`;
+
+                setTimeout(() => {
+                    profileScreen.style.transition = "opacity 1.2s ease";
+                    profileScreen.style.opacity = "1";
+                }, 100);
+            }, 800);
+        }
+
+        // Mouse Parallax Effect for Profile Card
+        document.addEventListener('mousemove', (e) => {
+            if (profileScreen.style.display === 'flex') {
+                const card = document.querySelector('.profile-card');
+                const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+                const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+                card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+            }
+        });
+
+        // Reset Tilt when mouse leaves
+        document.addEventListener('mouseleave', () => {
+            const card = document.querySelector('.profile-card');
+            card.style.transform = `rotateY(0deg) rotateX(0deg)`;
+        });
+
+        // Security: Disable Right-Click
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
+        // Security: Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+        document.onkeydown = function(e) {
+            if (e.keyCode == 123) { // F12
+                return false;
+            }
+            if (e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0) || e.keyCode == 'i'.charCodeAt(0))) { // Ctrl+Shift+I
+                return false;
+            }
+            if (e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0) || e.keyCode == 'j'.charCodeAt(0))) { // Ctrl+Shift+J
+                return false;
+            }
+            if (e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0) || e.keyCode == 'u'.charCodeAt(0))) { // Ctrl+U
+                return false;
+            }
+            if (e.ctrlKey && (e.keyCode == 'S'.charCodeAt(0) || e.keyCode == 's'.charCodeAt(0))) { // Ctrl+S
+                return false;
+            }
+        };
+
+        // Security: Anti-DevTools Debugger loop
+        (function() {
+            const block = function() {
+                setInterval(function() {
+                    (function() {
+                        return false;
+                    }["constructor"]("debugger")["call"]());
+                }, 50);
+            };
+            try {
+                block();
+            } catch (err) {}
+        })();
+    </script>
+</body>
+</html>
