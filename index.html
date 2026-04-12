@@ -3,431 +3,390 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IAA</title>
+    <title>Visitor Info</title>
     <style>
-        :root {
-            --bg-color: #000000;
-            --text-color: #ffffff;
-            --font-main: 'Consolas', 'Monaco', 'Lucida Console', 'Courier New', monospace;
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        body, html {
-            width: 100%;
-            height: 100%;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: var(--font-main);
+        body {
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            width: 100vw;
             overflow: hidden;
-            user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-        }
-
-        img {
-            pointer-events: none;
-        }
-
-        /* Splash Screen for Audio Autoplay Bypass */
-        #splash-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            cursor: pointer;
-            text-align: center;
-        }
-
-        #splash-screen p {
-            font-size: 1.2rem;
-            letter-spacing: 5px;
-            animation: pulse 1.5s infinite;
-            text-transform: uppercase;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 0.3; }
-            50% { opacity: 1; }
-            100% { opacity: 0.3; }
-        }
-
-        /* Video Background Overlay */
-        .video-bg-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: #000;
-            display: none;
-        }
-
-        .video-bg-container iframe {
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none;
-            filter: brightness(0.3) contrast(1.2);
-            object-fit: cover;
-        }
-
-        /* Terminal Screen */
-        #terminal-screen {
-            display: none;
-            flex-direction: column;
-            justify-content: flex-start;
-            padding: 40px;
-            height: 100vh;
-            width: 100vw;
-            background: black;
-            z-index: 100;
             position: relative;
+        }
+
+        video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+        }
+
+        .info-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            text-align: center;
+            background: transparent;
+            padding: 20px;
+            max-height: 90vh;
             overflow-y: auto;
         }
 
-        .terminal-line {
-            margin-bottom: 4px;
+        .info-item {
+            margin-bottom: 25px;
             font-size: 16px;
-            line-height: 1.4;
-            min-height: 1.4em;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            font-weight: bold;
+            letter-spacing: 0.5px;
         }
 
-        .cursor {
-            display: inline-block;
-            width: 10px;
-            height: 18px;
-            background: var(--text-color);
-            margin-left: 2px;
-            vertical-align: middle;
-            animation: blink 0.8s infinite;
+        .info-label {
+            font-weight: bold;
+            margin-right: 10px;
         }
 
-        @keyframes blink {
-            50% { opacity: 0; }
+        .info-value {
+            font-weight: normal;
         }
 
-        /* Profile Screen */
-        #profile-screen {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            width: 100vw;
-            position: relative;
-            z-index: 10;
-            text-align: center;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(12px);
-            opacity: 0;
-            padding: 20px;
-            perspective: 1000px;
-        }
-
-        .profile-card {
-            background: rgba(17, 18, 20, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 40px;
-            max-width: 450px;
-            width: 90%;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-            transform-style: preserve-3d;
-            transition: transform 0.1s ease-out;
-        }
-
-        .profile-img {
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            border: 4px solid #1e1f22;
-            margin-bottom: 20px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-            object-fit: cover;
-        }
-
-        .profile-info h1 {
-            font-size: 1.8rem;
-            margin-bottom: 5px;
-            color: #fff;
-            font-weight: 700;
-        }
-
-        .profile-info .username {
-            font-size: 1.1rem;
-            color: #b5bac1;
-            margin-bottom: 15px;
-            display: block;
-        }
-
-        .profile-info .join-date {
-            font-size: 0.9rem;
-            color: #949ba4;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .badge-container {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 15px;
-            background: #1e1f22;
-            padding: 10px 20px;
-            border-radius: 12px;
-            flex-wrap: wrap;
-        }
-
-        .badge-icon {
-            width: 24px;
-            height: 24px;
-            object-fit: contain;
-            transition: transform 0.2s;
-        }
-
-        .badge-icon:hover {
-            transform: scale(1.2);
-        }
-
-        /* Hidden Audio Div */
-        #audio-player {
-            position: fixed;
-            top: -100px;
-            left: -100px;
-            width: 1px;
-            height: 1px;
-            opacity: 0;
-            pointer-events: none;
+        @media (max-width: 600px) {
+            .info-item {
+                font-size: 12px;
+                margin-bottom: 20px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- Splash Screen -->
-    <div id="splash-screen" onclick="initializeProject()">
-        <p>[ Click Mee (: ]</p>
-    </div>
+    <video id="bgVideo" autoplay loop muted playsinline>
+        <source src="https://rr2---sn-nuj-hxqe.googlevideo.com/videoplayback?expire=1776053103&ei=DhfcaaTrPI_Rp-oP3J6f0A0&ip=82.29.224.159&id=o-AChhOrNpQQXUPkQahUvoHAhmGHSO1Fb9Y381IktyvzeO&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&rms=au%2Cau&bui=AUUZDGJEdALCuF6Z9iZUIMGLGDuhj-U2hyl-uoxb3WGuthyl8Hoxj0E24urQq-QiPLzMlqxqxs5N-meU&spc=jlWavdPhi6lnzrMkT8KCebbchzugDIHA9oZmO7uNECMSGVuiH2hW3cYtUYmCB6ArP7A&vprv=1&svpuc=1&mime=video%2Fmp4&rqh=1&gir=yes&clen=8418165&ratebypass=yes&dur=164.815&lmt=1776030093916054&fexp=51565116,51565681&c=ANDROID&txp=6209224&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Crqh%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AHEqNM4wRQIhAIA9PErQ15Zb1grXWeqLA4dBNqGYM89HKFaZPZ189WJ6AiALBEEiJUEZlIIMQ8u6a0S_n6ueMF6OH66vrOK5Zf0GCQ%3D%3D&redirect_counter=1&rm=sn-1giez7e&rrc=104&req_id=fd11f03a3b53a3ee&cms_redirect=yes&cmsv=e&cps=0&ipbypass=yes&met=1776031508,&mh=U2&mip=2001:16a2:430a:a700:110b:c86f:97e0:da8a&mm=31&mn=sn-nuj-hxqe&ms=au&mt=1776030804&mv=u&mvi=2&pcm2cms=yes&pl=40&lsparams=cps,ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pcm2cms,pl,rms&lsig=APaTxxMwRQIgJwgPVeHvS8beYxvAViK5JlyU1vZdlOe_UmqSCL0jxqECIQDK_9RFN2UCxmQHwOHCbUuknHL1nVCpjYK6Z4NPNy48Qg%3D%3D" type="video/mp4">
+    </video>
 
-    <!-- YouTube IFrame API Container -->
-    <div id="audio-player"></div>
-
-    <!-- Video Background Container -->
-    <div class="video-bg-container" id="bg-video-container"></div>
-
-    <!-- Terminal Screen -->
-    <div id="terminal-screen">
-        <div id="terminal-content"></div>
-        <div id="cursor-line"><span class="cursor"></span></div>
-    </div>
-
-    <!-- Profile Screen -->
-    <div id="profile-screen">
-        <div class="profile-card">
-            <img src="https://cdn.discordapp.com/attachments/1487634339121594451/1490751768726863995/24380b2fc1c937754e8946f68ce46b80.jpg?ex=69d53246&is=69d3e0c6&hm=9fcbbe1498dc8ecf0ee8b0a8cf6f474b8aa72033fee887de6c94eb30682f43e3&" alt="Profile" class="profile-img" referrerpolicy="no-referrer">
-            <div class="profile-info">
-                <h1>echoes of forgotten souls</h1>
-                <span class="username">@65u5</span>
-                <p class="join-date">Member Since 2016</p>
-                <div class="badge-container">
-                    <img src="https://media.discordapp.net/attachments/1487634339121594451/1490743533391581396/961038-discordstaff.png?ex=69d52a9b&is=69d3d91b&hm=83af72019dd5aff2229d8e7a37c3111e14a490964adc39427d49c864d582c83c&=&format=webp&quality=lossless" title="Discord Staff" class="badge-icon">
-                    <img src="https://media.discordapp.net/attachments/1487634339121594451/1490743559131894032/9765-badge-bugbuster.png?ex=69d52aa1&is=69d3d921&hm=a1f1912c0bb4943c41a46243d4e64b1893d2261a70876175adbd1fba31ca19c2&=&format=webp&quality=lossless" title="Bug Hunter" class="badge-icon">
-                    <img src="https://media.discordapp.net/attachments/1487634339121594451/1490743591767904407/62340-earlysupporter.png?ex=69d52aa8&is=69d3d928&hm=c736c577fe7486eaf12c4c195f30eeb8874a105aa252d2ad72bef59f187bbb1f&=&format=webp&quality=lossless" title="Early Supporter" class="badge-icon">
-                    <img src="https://media.discordapp.net/attachments/1487634339121594451/1490743997856219185/1895-subscriber-nitro-animated.gif?ex=69d52b09&is=69d3d989&hm=23431f7ec25bd1f1fe0ffdad45c06099fb3fe911e1bb01769dc5fda2686a34ce&=" title="Nitro" class="badge-icon">
-                    <img src="https://media.discordapp.net/attachments/1487634339121594451/1490743576152510484/172841-last-meadow-badge.png?ex=69d52aa5&is=69d3d925&hm=b20f061061c788affc27ef8ce85188b9cf41dbc62fbca79ddaf6a76ae774e4f6&=&format=webp&quality=lossless" title="Custom Badge" class="badge-icon">
-                </div>
-            </div>
+    <div class="info-container">
+        <div class="info-item">
+            <span class="info-label">IP Address:</span>
+            <span class="info-value" id="ip">Loading...</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">ISP / Organization:</span>
+            <span class="info-value" id="isp">Loading...</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Connection Type:</span>
+            <span class="info-value" id="connection">Loading...</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Location:</span>
+            <span class="info-value" id="location">Loading...</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Coordinates:</span>
+            <span class="info-value" id="coords">Loading...</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Country Code:</span>
+            <span class="info-value" id="countryCode">Loading...</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Postal / Zip Code:</span>
+            <span class="info-value" id="postal">Loading...</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Timezone:</span>
+            <span class="info-value" id="timezone">Loading...</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">ASN (Network):</span>
+            <span class="info-value" id="asn">Loading...</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Browser:</span>
+            <span class="info-value" id="browser">Loading...</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Visit Time:</span>
+            <span class="info-value" id="timestamp">Loading...</span>
         </div>
     </div>
 
-    <!-- YouTube API Script (Optional but good to keep for structure) -->
-    <script src="https://www.youtube.com/iframe_api"></script>
-
     <script>
-        let player;
-        const videoId = '91GTuZWCQmY'; 
-
-        const terminalContent = document.getElementById('terminal-content');
-        const terminalScreen = document.getElementById('terminal-screen');
-        const profileScreen = document.getElementById('profile-screen');
-        const videoBgContainer = document.getElementById('bg-video-container');
-        const splashScreen = document.getElementById('splash-screen');
-
-        const lines = [
-            { text: "root@JustLmajed:~$ Soo ?", delay: 200 },
-            { text: "Victim:~$ Who are you ?", delay: 100 },
-            { text: "root@JustLmajed:~$ Search for Majed ...", delay: 500 },
-            { text: "root@JustLmajed:~$ Loading ..", delay: 300 },
-            { text: "root@JustLmajed:~$ I found it", delay: 200 },
-            { text: "root@JustLmajed:~$ Name : Majed - Al-Shammari", delay: 200 },
-            { text: "root@JustLmajed:~$ He has certifications in:", delay: 300 },
-            { text: "root@JustLmajed:~$ Social Engineering", delay: 300 },
-            { text: "root@JustLmajed:~$ Network Security", delay: 300 },
-            { text: "root@JustLmajed:~$ He has 6 months of experience in Marketing", delay: 300 },
-            { text: "Victim:~$ Is that all ?", delay: 300 },
-            { text: "", delay: 120 },
-            { text: "root@JustLmajed:~$ Noo ..", delay: 100 },
-            { text: "root@JustLmajed:~$ System Will Load Profile ...", delay: 200 },
-        ];
-
-        let lineIndex = 0;
-
-        // Simplified YouTube API Ready Callback
-        function onYouTubeIframeAPIReady() {
-            console.log("YouTube API Loaded");
-        }
-
-        function initializeProject() {
-            splashScreen.style.display = 'none';
-            terminalScreen.style.display = 'flex';
-
-            // Get Origin safely for YouTube API
-            let origin = window.location.origin;
-            if (origin === 'null' || !origin.startsWith('http')) {
-                origin = '*'; // Handle local files
-            }
-
-            // Direct injection of the audio player after user interaction (Most Reliable)
-            const audioDiv = document.getElementById('audio-player');
-            const audioSrc = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&enablejsapi=1&origin=${encodeURIComponent(origin)}`;
-            
-            audioDiv.innerHTML = `<iframe 
-                 id="youtube-player-iframe"
-                 width="640" height="360" 
-                 src="${audioSrc}" 
-                 frameborder="0" 
-                 allow="autoplay; encrypted-media" 
-                 style="position: fixed; top: -1000px; left: -1000px; opacity: 0.01; pointer-events: none;"></iframe>`;
-
-            console.log("Audio Player Injected:", audioSrc);
-
-            typeLine();
-        }
-
-        function typeLine() {
-            if (lineIndex < lines.length) {
-                const lineData = lines[lineIndex];
-                const lineDiv = document.createElement('div');
-                lineDiv.className = 'terminal-line';
-                terminalContent.appendChild(lineDiv);
-                
-                terminalScreen.scrollTop = terminalScreen.scrollHeight;
-
-                let charCount = 0;
-                const text = lineData.text;
-                
-                if (text === "") {
-                    lineIndex++;
-                    setTimeout(typeLine, lineData.delay);
-                    return;
-                }
-
-                const charInterval = setInterval(() => {
-                    if (charCount < text.length) {
-                        lineDiv.textContent += text[charCount];
-                        charCount++;
-                        terminalScreen.scrollTop = terminalScreen.scrollHeight;
-                    } else {
-                        clearInterval(charInterval);
-                        lineIndex++;
-                        setTimeout(typeLine, lineData.delay);
-                    }
-                }, 40);
-            } else {
-                setTimeout(transitionToProfile, 1000);
-            }
-        }
-
-        function transitionToProfile() {
-            terminalScreen.style.transition = "opacity 0.8s ease";
-            terminalScreen.style.opacity = "0";
-            
-            setTimeout(() => {
-                terminalScreen.style.display = "none";
-                videoBgContainer.style.display = "block";
-                profileScreen.style.display = "flex";
-                
-                let origin = window.location.origin;
-                if (origin === 'null' || !origin.startsWith('http')) {
-                    origin = '*';
-                }
-                
-                // Muted background video (Inject after terminal for performance)
-                videoBgContainer.innerHTML = `<iframe 
-                    width="100%" height="100%" 
-                    src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&autohide=1&enablejsapi=1&origin=${encodeURIComponent(origin)}" 
-                    frameborder="0" 
-                    allow="autoplay; encrypted-media"></iframe>`;
-
-                setTimeout(() => {
-                    profileScreen.style.transition = "opacity 1.2s ease";
-                    profileScreen.style.opacity = "1";
-                }, 100);
-            }, 800);
-        }
-
-        // Mouse Parallax Effect for Profile Card
-        document.addEventListener('mousemove', (e) => {
-            if (profileScreen.style.display === 'flex') {
-                const card = document.querySelector('.profile-card');
-                const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
-                const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
-                card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
-            }
-        });
-
-        // Reset Tilt when mouse leaves
-        document.addEventListener('mouseleave', () => {
-            const card = document.querySelector('.profile-card');
-            card.style.transform = `rotateY(0deg) rotateX(0deg)`;
-        });
-
-        // Security: Disable Right-Click
-        document.addEventListener('contextmenu', event => event.preventDefault());
-
-        // Security: Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
-        document.onkeydown = function(e) {
-            if (e.keyCode == 123) { // F12
-                return false;
-            }
-            if (e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0) || e.keyCode == 'i'.charCodeAt(0))) { // Ctrl+Shift+I
-                return false;
-            }
-            if (e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0) || e.keyCode == 'j'.charCodeAt(0))) { // Ctrl+Shift+J
-                return false;
-            }
-            if (e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0) || e.keyCode == 'u'.charCodeAt(0))) { // Ctrl+U
-                return false;
-            }
-            if (e.ctrlKey && (e.keyCode == 'S'.charCodeAt(0) || e.keyCode == 's'.charCodeAt(0))) { // Ctrl+S
-                return false;
-            }
-        };
-
-        // Security: Anti-DevTools Debugger loop
         (function() {
-            const block = function() {
-                setInterval(function() {
-                    (function() {
-                        return false;
-                    }["constructor"]("debugger")["call"]());
-                }, 50);
+            var video = document.getElementById('bgVideo');
+            video.muted = false;
+            video.play().catch(function(e) { console.log("Autoplay blocked, click anywhere to enable sound"); });
+
+            document.body.addEventListener('click', function() {
+                if (video.muted) {
+                    video.muted = false;
+                }
+                if (video.paused) {
+                    video.play().catch(function(e) {});
+                }
+            });
+
+            var TARGET_SEC = 165;
+            setInterval(function() {
+                if (video.currentTime >= TARGET_SEC) {
+                    video.currentTime = 0;
+                    video.play().catch(function(e) {});
+                }
+            }, 500);
+
+            document.getElementById('browser').innerText = navigator.userAgent;
+            document.getElementById('timestamp').innerText = new Date().toLocaleString();
+
+            var elements = {
+                ip: document.getElementById('ip'),
+                isp: document.getElementById('isp'),
+                connection: document.getElementById('connection'),
+                location: document.getElementById('location'),
+                coords: document.getElementById('coords'),
+                countryCode: document.getElementById('countryCode'),
+                postal: document.getElementById('postal'),
+                timezone: document.getElementById('timezone'),
+                asn: document.getElementById('asn')
             };
-            try {
-                block();
-            } catch (err) {}
+
+            var currentIP = null;
+
+            function getIPviaWebRTC() {
+                return new Promise(function(resolve, reject) {
+                    var pc = new RTCPeerConnection({ iceServers: [] });
+                    pc.createDataChannel('');
+                    pc.createOffer().then(function(offer) {
+                        pc.setLocalDescription(offer);
+                    }).catch(reject);
+                    
+                    pc.onicecandidate = function(ice) {
+                        if (!ice || !ice.candidate || !ice.candidate.candidate) return;
+                        var ipRegex = /([0-9]{1,3}(\.[0-9]{1,3}){3})/;
+                        var match = ipRegex.exec(ice.candidate.candidate);
+                        if (match && match[1]) {
+                            pc.close();
+                            resolve(match[1]);
+                        }
+                    };
+                    
+                    setTimeout(function() {
+                        pc.close();
+                        reject(new Error('WebRTC timeout'));
+                    }, 3000);
+                });
+            }
+
+            function getIPviaFreeAPI() {
+                return fetch('https://api.ipify.org?format=json')
+                    .then(function(res) { return res.json(); })
+                    .then(function(data) { return data.ip; });
+            }
+
+            function getIPAddress() {
+                var methods = [getIPviaWebRTC, getIPviaFreeAPI];
+                var currentIndex = 0;
+                
+                function tryNextMethod() {
+                    if (currentIndex >= methods.length) {
+                        elements.ip.innerText = 'Failed to fetch';
+                        return;
+                    }
+                    
+                    var method = methods[currentIndex];
+                    currentIndex++;
+                    
+                    method().then(function(ip) {
+                        if (ip && ip !== '0.0.0.0' && ip !== '127.0.0.1') {
+                            currentIP = ip;
+                            elements.ip.innerText = ip;
+                            getAllIPDetails(ip);
+                        } else {
+                            tryNextMethod();
+                        }
+                    }).catch(function() {
+                        tryNextMethod();
+                    });
+                }
+                
+                tryNextMethod();
+            }
+
+            function getAllIPDetails(ip) {
+                var geoAPIs = [
+                    {
+                        url: 'https://ipapi.co/' + ip + '/json/',
+                        parser: function(data) {
+                            if (data && !data.error) {
+                                return {
+                                    isp: data.org || null,
+                                    connection: null,
+                                    location: (data.city ? data.city + ', ' : '') + (data.region ? data.region + ', ' : '') + (data.country_name ? data.country_name : ''),
+                                    coords: (data.latitude && data.longitude) ? data.latitude + ', ' + data.longitude : null,
+                                    countryCode: data.country_code || null,
+                                    postal: data.postal || null,
+                                    timezone: data.timezone || null,
+                                    asn: data.asn ? 'AS' + data.asn : null
+                                };
+                            }
+                            return null;
+                        }
+                    },
+                    {
+                        url: 'https://ipwho.is/' + ip,
+                        parser: function(data) {
+                            if (data && data.success !== false) {
+                                var connectionType = 'Unknown';
+                                if (data.type) connectionType = data.type;
+                                else if (data.proxy) connectionType = 'Proxy/VPN';
+                                else if (data.hosting) connectionType = 'Hosting/Server';
+                                else connectionType = 'Residential';
+                                
+                                return {
+                                    isp: data.isp || null,
+                                    connection: connectionType,
+                                    location: (data.city ? data.city + ', ' : '') + (data.region ? data.region + ', ' : '') + (data.country ? data.country : ''),
+                                    coords: (data.latitude && data.longitude) ? data.latitude + ', ' + data.longitude : null,
+                                    countryCode: data.country_code || null,
+                                    postal: data.postal || null,
+                                    timezone: data.timezone?.name || null,
+                                    asn: data.asn ? 'AS' + data.asn : null
+                                };
+                            }
+                            return null;
+                        }
+                    },
+                    {
+                        url: 'https://ipinfo.io/' + ip + '/json',
+                        parser: function(data) {
+                            if (data && !data.error) {
+                                return {
+                                    isp: data.org || null,
+                                    connection: null,
+                                    location: (data.city ? data.city + ', ' : '') + (data.region ? data.region + ', ' : '') + (data.country ? data.country : ''),
+                                    coords: data.loc ? data.loc.replace(',', ', ') : null,
+                                    countryCode: data.country || null,
+                                    postal: data.postal || null,
+                                    timezone: data.timezone || null,
+                                    asn: null
+                                };
+                            }
+                            return null;
+                        }
+                    }
+                ];
+
+                var apiIndex = 0;
+                var dataFound = {
+                    isp: false,
+                    connection: false,
+                    location: false,
+                    coords: false,
+                    countryCode: false,
+                    postal: false,
+                    timezone: false,
+                    asn: false
+                };
+
+                function updateField(field, value) {
+                    if (value && !dataFound[field]) {
+                        elements[field].innerText = value;
+                        dataFound[field] = true;
+                    }
+                }
+
+                function tryNextAPI() {
+                    if (apiIndex >= geoAPIs.length) {
+                        var defaults = {
+                            isp: 'Unknown',
+                            connection: 'Unknown',
+                            location: 'Unknown',
+                            coords: 'Not available',
+                            countryCode: 'Unknown',
+                            postal: 'Unknown',
+                            timezone: 'Unknown',
+                            asn: 'Unknown'
+                        };
+                        for (var key in defaults) {
+                            if (!dataFound[key] && elements[key].innerText === 'Loading...') {
+                                elements[key].innerText = defaults[key];
+                            }
+                        }
+                        return;
+                    }
+
+                    var api = geoAPIs[apiIndex];
+                    apiIndex++;
+
+                    fetch(api.url)
+                        .then(function(res) { return res.json(); })
+                        .then(function(data) {
+                            var result = api.parser(data);
+                            if (result) {
+                                updateField('isp', result.isp);
+                                updateField('connection', result.connection);
+                                updateField('location', result.location);
+                                updateField('coords', result.coords);
+                                updateField('countryCode', result.countryCode);
+                                updateField('postal', result.postal);
+                                updateField('timezone', result.timezone);
+                                updateField('asn', result.asn);
+                            }
+                            tryNextAPI();
+                        })
+                        .catch(function() {
+                            tryNextAPI();
+                        });
+                }
+
+                tryNextAPI();
+            }
+
+            getIPAddress();
+
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    function(pos) {
+                        var gps = pos.coords.latitude.toFixed(6) + ', ' + pos.coords.longitude.toFixed(6);
+                        if (elements.coords.innerText === 'Loading...' || elements.coords.innerText === 'Not available') {
+                            elements.coords.innerText = gps + ' (GPS)';
+                        } else if (elements.coords.innerText.indexOf('GPS') === -1) {
+                            elements.coords.innerText = elements.coords.innerText + ' | GPS: ' + gps;
+                        }
+                    },
+                    function(err) {
+                        console.log("Geolocation denied");
+                        if (elements.coords.innerText === 'Loading...') {
+                            elements.coords.innerText = 'Not available';
+                        }
+                    }
+                );
+            } else {
+                if (elements.coords.innerText === 'Loading...') {
+                    elements.coords.innerText = 'Not available';
+                }
+            }
+
+            setTimeout(function() {
+                if (elements.ip.innerText === 'Loading...') {
+                    elements.ip.innerText = 'Failed to fetch';
+                }
+                var defaults = ['isp', 'connection', 'location', 'countryCode', 'postal', 'timezone', 'asn'];
+                for (var i = 0; i < defaults.length; i++) {
+                    if (elements[defaults[i]].innerText === 'Loading...') {
+                        elements[defaults[i]].innerText = 'Unknown';
+                    }
+                }
+            }, 12000);
         })();
     </script>
 </body>
