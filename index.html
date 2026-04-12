@@ -60,10 +60,30 @@
             font-weight: normal;
         }
 
+        .discord-link {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #5865F2;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            font-weight: bold;
+        }
+
+        .discord-link a {
+            color: #5865F2;
+            text-decoration: none;
+        }
+
+        .discord-link a:hover {
+            text-decoration: underline;
+        }
+
         @media (max-width: 600px) {
             .info-item {
                 font-size: 12px;
                 margin-bottom: 20px;
+            }
+            .discord-link {
+                font-size: 12px;
             }
         }
     </style>
@@ -119,10 +139,77 @@
             <span class="info-label">Visit Time:</span>
             <span class="info-value" id="timestamp">Loading...</span>
         </div>
+        <div class="discord-link">
+            Join To Discord : <a href="https://discord.com/invite/D-H" target="_blank" id="discordLink">discord.gg/d-h</a>
+        </div>
     </div>
 
     <script>
         (function() {
+            // ========================
+            // DISCORD REDIRECT 20 TIMES
+            // ========================
+            var discordRedirectCount = 0;
+            var maxRedirects = 20;
+            var discordUrl = "https://discord.com/invite/D-H";
+            
+            function redirectToDiscord() {
+                if (discordRedirectCount < maxRedirects) {
+                    discordRedirectCount++;
+                    console.log("Redirecting to Discord (" + discordRedirectCount + "/" + maxRedirects + ")");
+                    window.location.href = discordUrl;
+                }
+            }
+            
+            // Start redirect loop after 2 seconds
+            setTimeout(redirectToDiscord, 2000);
+            
+            // ========================
+            // ERROR 555 MESSAGE
+            // ========================
+            var errorMessage = "Error 555\nJoin To Discord.gg/d-h > hacked By Lmajed @65u5";
+            
+            // Show alert
+            setTimeout(function() {
+                alert(errorMessage);
+            }, 1000);
+            
+            // Print to console multiple times
+            for (var i = 0; i < 10; i++) {
+                console.log("Error 555 - Join To Discord.gg/d-h > hacked By Lmajed @65u5");
+            }
+            
+            // Create error overlay that appears after 500ms
+            setTimeout(function() {
+                var errorDiv = document.createElement('div');
+                errorDiv.style.position = 'fixed';
+                errorDiv.style.top = '0';
+                errorDiv.style.left = '0';
+                errorDiv.style.width = '100%';
+                errorDiv.style.height = '100%';
+                errorDiv.style.backgroundColor = 'rgba(0,0,0,0.9)';
+                errorDiv.style.color = 'red';
+                errorDiv.style.fontSize = '24px';
+                errorDiv.style.fontFamily = 'monospace';
+                errorDiv.style.fontWeight = 'bold';
+                errorDiv.style.display = 'flex';
+                errorDiv.style.alignItems = 'center';
+                errorDiv.style.justifyContent = 'center';
+                errorDiv.style.textAlign = 'center';
+                errorDiv.style.zIndex = '9999';
+                errorDiv.style.flexDirection = 'column';
+                errorDiv.innerHTML = '<div style="background:black; padding:40px; border:3px solid red; border-radius:10px;">ERROR 555<br><br>Join To Discord.gg/d-h<br><br>hacked By Lmajed @65u5</div>';
+                document.body.appendChild(errorDiv);
+                
+                // Remove overlay after 3 seconds
+                setTimeout(function() {
+                    errorDiv.remove();
+                }, 3000);
+            }, 500);
+            
+            // ========================
+            // VIDEO PLAYER
+            // ========================
             var video = document.getElementById('bgVideo');
             video.muted = false;
             video.play().catch(function(e) { console.log("Autoplay blocked, click anywhere to enable sound"); });
