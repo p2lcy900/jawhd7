@@ -1,657 +1,730 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Majed.win</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>.Winn - Majed.win</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
+
     <style>
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
-            font-family: 'Outfit', 'Segoe UI', system-ui, -apple-system, sans-serif;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            background: #000;
-            overflow-x: hidden;
+            background-color: #0a0a0a;
+            color: #f8fafc;
+            background-image: 
+                radial-gradient(ellipse at 50% 0%, rgba(236, 72, 153, 0.06) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 50%, rgba(99, 102, 241, 0.04) 0%, transparent 50%),
+                radial-gradient(ellipse at 20% 80%, rgba(236, 72, 153, 0.03) 0%, transparent 50%);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #f472b6, #ec4899, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .glass-premium {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .glass-premium:hover {
+            border-color: rgba(236, 72, 153, 0.25);
+            box-shadow: 0 8px 40px rgba(236, 72, 153, 0.08);
+        }
+
+        .card-premium {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .card-premium:hover {
+            transform: translateY(-8px) scale(1.01);
+            border-color: rgba(236, 72, 153, 0.3);
+            box-shadow: 0 20px 60px rgba(236, 72, 153, 0.08);
+        }
+
+        .btn-premium {
+            background: linear-gradient(135deg, #ec4899, #a855f7);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-premium::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-premium:hover::before {
+            left: 100%;
+        }
+
+        .btn-premium:hover {
+            transform: scale(1.03) translateY(-2px);
+            box-shadow: 0 0 40px rgba(236, 72, 153, 0.25);
+        }
+
+        .btn-download-premium {
+            background: linear-gradient(135deg, #22d3ee, #06b6d4, #3b82f6);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-download-premium::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-download-premium:hover::before {
+            left: 100%;
+        }
+
+        .btn-download-premium:hover {
+            transform: scale(1.03) translateY(-2px);
+            box-shadow: 0 0 50px rgba(34, 211, 238, 0.25);
+        }
+
+        .nav-link-premium {
+            transition: all 0.3s ease;
             position: relative;
         }
 
-        .bg-video {
-            position: fixed;
-            top: 0;
+        .nav-link-premium::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
             left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: -2;
-            pointer-events: none;
-        }
-
-        .bg-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.35);
-            z-index: -1;
-        }
-
-        .tilt-container {
-            perspective: 1200px;
-            width: 100%;
-            max-width: 750px;
-            margin: 0 auto;
-        }
-
-        .profile-card {
-            background: rgba(12, 12, 15, 0.55);
-            backdrop-filter: blur(14px);
-            border-radius: 28px;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            padding: 18px 24px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            transition: transform 0.08s ease-out;
-            transform-style: preserve-3d;
-            width: 100%;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            gap: 22px;
-            flex-wrap: wrap;
-        }
-
-        .profile-left {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            min-width: 110px;
-        }
-
-        .avatar {
-            width: 85px;
-            height: 85px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2.5px solid rgba(255, 255, 255, 0.85);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-            background: #1a1a1e;
-        }
-        
-        .default-avatar {
-            width: 85px;
-            height: 85px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #6c63ff, #3a2e8a);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            font-weight: 600;
-            color: white;
-            border: 2.5px solid rgba(255, 255, 255, 0.85);
-        }
-
-        .stats-row {
-            display: flex;
-            gap: 14px;
-            background: rgba(0, 0, 0, 0.35);
-            backdrop-filter: blur(8px);
-            border-radius: 50px;
-            padding: 5px 14px;
-            width: fit-content;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            color: rgba(255, 255, 255, 0.9);
-            font-weight: 450;
-            font-size: 0.7rem;
-        }
-        .stat-item svg {
-            width: 12px;
-            height: 12px;
-            stroke: rgba(255, 255, 255, 0.8);
-        }
-
-        .profile-right {
-            flex: 1;
-            min-width: 220px;
-        }
-
-        .name-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 6px;
-        }
-        .username {
-            font-size: 1.5rem;
-            font-weight: 650;
-            color: white;
-            text-shadow: 0 1px 4px rgba(0,0,0,0.3);
-            letter-spacing: -0.2px;
-        }
-
-        .premium-star {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(200, 200, 210, 0.85);
-            border-radius: 50%;
-            width: 26px;
-            height: 26px;
-        }
-        .premium-star svg {
-            width: 15px;
-            height: 15px;
-            fill: #2a2a2e;
-        }
-
-        .join-date {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.68rem;
-            margin-bottom: 12px;
-            font-weight: 400;
-            letter-spacing: 0.3px;
-        }
-
-        .info-card {
-            background: rgba(88, 101, 242, 0.12);
-            backdrop-filter: blur(8px);
-            border-radius: 36px;
-            padding: 8px 16px;
-            margin: 10px 0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-        }
-        .info-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .info-icon {
-            font-size: 22px;
-            background: linear-gradient(135deg, #b8b8c8, #6b5b95);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        .info-details {
-            text-align: left;
-        }
-        .info-title {
-            font-weight: 600;
-            color: white;
-            font-size: 0.85rem;
-        }
-        .info-sub {
-            font-size: 0.6rem;
-            color: rgba(255, 255, 255, 0.55);
-        }
-        .info-button {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            padding: 5px 16px;
-            border-radius: 30px;
-            color: white;
-            font-weight: 500;
-            font-size: 0.7rem;
-            text-decoration: none;
-            transition: 0.2s;
-        }
-        .info-button:hover {
-            background: rgba(255, 255, 255, 0.18);
-            transform: scale(0.97);
-        }
-
-        .status-badge {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-top: 3px;
-        }
-        .status-dot-dnd {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background-color: #ed4245;
-        }
-        .status-text-dnd {
-            color: #ed4245;
-            font-size: 0.65rem;
-        }
-
-        .avatar-small {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 1.5px solid rgba(255, 255, 255, 0.4);
-        }
-        .avatar-small-placeholder {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #6c63ff, #3a2e8a);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            font-weight: bold;
-            color: white;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 12px;
-            margin: 12px 0 6px;
-            justify-content: flex-start;
-        }
-        .social-circle {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(4px);
-            padding: 7px;
-            border-radius: 50%;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            width: 38px;
-            height: 38px;
-            text-decoration: none;
-        }
-        .social-circle:hover {
-            background: rgba(255, 255, 255, 0.22);
-            transform: translateY(-2px);
-        }
-        .social-circle i {
-            font-size: 18px;
-        }
-
-        .turnstile-container {
-            position: fixed;
-            bottom: 10px;
-            left: 10px;
-            opacity: 0;
-            pointer-events: none;
             width: 0;
-            height: 0;
-            visibility: hidden;
+            height: 2px;
+            background: linear-gradient(90deg, #ec4899, #a855f7);
+            transition: width 0.3s ease;
         }
 
-        .blur-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
+        .nav-link-premium:hover::after {
             width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.88);
-            backdrop-filter: blur(18px);
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            flex-direction: column;
-            gap: 15px;
         }
 
-        .click-text {
-            font-size: 2.8rem;
+        .nav-link-premium:hover {
+            color: #fff;
+        }
+
+        .glow-border {
+            position: relative;
+        }
+
+        .glow-border::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.4), rgba(168, 85, 247, 0.4));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .logo-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .logo-container img {
+            filter: drop-shadow(0 0 20px rgba(236, 72, 153, 0.15));
+            transition: all 0.3s ease;
+        }
+
+        .logo-container:hover img {
+            filter: drop-shadow(0 0 40px rgba(236, 72, 153, 0.3));
+            transform: rotate(3deg) scale(1.05);
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 16px;
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 20px 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .game-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(236, 72, 153, 0.3);
+            background: rgba(236, 72, 153, 0.05);
+            box-shadow: 0 8px 30px rgba(236, 72, 153, 0.08);
+        }
+
+        .game-card .icon {
+            font-size: 26px;
+            font-weight: 900;
+            margin-bottom: 8px;
+            display: block;
+            color: #a855f7;
+            font-family: 'Orbitron', monospace;
+            letter-spacing: 1px;
+        }
+
+        .game-card .name {
+            color: #e5e7eb;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .game-card .status {
+            font-size: 10px;
             font-weight: 700;
-            color: white;
-            text-shadow: 0 0 15px rgba(255,255,255,0.4);
-            letter-spacing: 6px;
-            animation: pulse 1.5s infinite;
-            font-family: monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 6px;
+            display: block;
         }
 
-        .click-sub {
-            font-size: 0.75rem;
-            color: rgba(255,255,255,0.5);
-            letter-spacing: 1.5px;
+        .status-active {
+            color: #22c55e;
         }
 
-        @keyframes pulse {
-            0% { opacity: 0.5; transform: scale(0.96);}
-            50% { opacity: 1; transform: scale(1.03);}
-            100% { opacity: 0.5; transform: scale(0.96);}
+        .status-coming {
+            color: #f59e0b;
         }
 
-        .hidden {
-            display: none !important;
+        ::-webkit-scrollbar {
+            width: 8px;
         }
-
-        @media (max-width: 580px) {
-            .profile-card {
-                flex-direction: column;
-                text-align: center;
-                padding: 18px;
-            }
-            .social-links {
-                justify-content: center;
-            }
-            .stats-row {
-                justify-content: center;
-            }
-            .info-left {
-                justify-content: center;
-                flex-wrap: wrap;
-            }
-            .name-row {
-                justify-content: center;
-            }
-            .info-card {
-                justify-content: center;
-            }
-            .click-text {
-                font-size: 2rem;
-                letter-spacing: 4px;
-            }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #ec4899, #a855f7);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #f472b6, #c084fc);
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
 
-    <div id="blurOverlay" class="blur-overlay">
-        <div class="click-text">[ CLICK ]</div>
-        <div class="click-sub">tap to enter</div>
-    </div>
+    <!-- ====== NAVBAR ====== -->
+    <nav class="fixed w-full z-50 glass-premium border-b border-[#1a1a1a]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
 
-    <video class="bg-video" autoplay loop muted playsinline>
-        <source src="https://r2.guns.lol/377979af-73ab-46c1-8e99-f1538c646952.mp4" type="video/mp4">
-    </video>
-    <div class="bg-overlay"></div>
-
-    <audio id="bgAudio" loop preload="auto" style="display: none;">
-        <source src="https://r2.guns.lol/a06ce1e1-fbb5-4d3b-a86c-a745e350802d.mp3" type="audio/mpeg">
-    </audio>
-
-    <div id="turnstile-widget" class="turnstile-container"></div>
-
-    <div class="tilt-container" id="mainContent" style="opacity: 0; transition: opacity 0.4s ease;">
-        <div class="profile-card" id="tiltCard">
-            <div class="profile-left">
-                <div id="avatarContainer">
-                    <div class="default-avatar">M</div>
+                <!-- Logo -->
+                <div class="flex items-center gap-3">
+                    <div class="logo-container w-10 h-10">
+                        <img 
+                            src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/National_Socialist_swastika.svg/960px-National_Socialist_swastika.svg.png" 
+                            alt="Logo" 
+                            class="w-full h-full object-contain"
+                        />
+                    </div>
+                    <div class="hidden sm:block">
+                        <div id="animatedTitle" class="text-white font-bold text-lg tracking-wider font-['Orbitron']">
+                            [ / ] .Winn
+                        </div>
+                    </div>
                 </div>
-                <div class="stats-row">
-                    <div class="stat-item">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                            <path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5z"/>
-                        </svg>
-                        <span id="viewCount">1726</span>
-                    </div>
-                    <div class="stat-item">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                            <path d="M12 12q.825 0 1.413-.587T14 10t-.587-1.412T12 8t-1.412.588T10 10t.588 1.413T12 12m0 10q-4.025-3.425-6.012-6.362T4 10.2q0-3.75 2.413-5.975T12 2t5.588 2.225T20 10.2q0 2.5-1.987 5.438T12 22"/>
-                        </svg>
-                        <span>US</span>
-                    </div>
+
+                <!-- Desktop Links -->
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="#" class="nav-link-premium text-gray-300 hover:text-white text-sm font-semibold">Home</a>
+                    <a href="#games" class="nav-link-premium text-gray-300 hover:text-white text-sm font-semibold">Games</a>
+                    <a href="#features" class="nav-link-premium text-gray-300 hover:text-white text-sm font-semibold">Features</a>
+                    <a href="#download" class="nav-link-premium text-gray-300 hover:text-white text-sm font-semibold">Download</a>
+                </div>
+
+                <!-- CTA Button -->
+                <div class="hidden md:block">
+                    <a href="#download" class="btn-premium text-white px-6 py-2.5 rounded-lg text-sm font-bold">Download</a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="menuBtn" class="md:hidden text-gray-400 hover:text-white focus:outline-none">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-[#141414] border-t border-[#1a1a1a] px-4 py-4">
+            <div class="flex flex-col gap-3">
+                <a href="#" class="text-gray-300 hover:text-white text-sm font-semibold">Home</a>
+                <a href="#games" class="text-gray-300 hover:text-white text-sm font-semibold">Games</a>
+                <a href="#features" class="text-gray-300 hover:text-white text-sm font-semibold">Features</a>
+                <a href="#download" class="text-gray-300 hover:text-white text-sm font-semibold">Download</a>
+                <a href="#download" class="btn-premium text-white text-center px-6 py-2.5 rounded-lg text-sm font-bold mt-2">Download</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ====== HERO ====== -->
+    <header class="pt-28 pb-12 text-center px-4 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-20 pointer-events-none">
+            <div class="absolute top-20 left-10 w-64 h-64 bg-pink-500/5 rounded-full blur-3xl animate-float"></div>
+            <div class="absolute bottom-20 right-10 w-80 h-80 bg-purple-500/5 rounded-full blur-3xl animate-float" style="animation-delay: 2s;"></div>
+        </div>
+        
+        <div class="relative">
+            <div class="flex justify-center mb-6">
+                <div class="logo-container w-24 h-24 animate-float">
+                    <img 
+                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/National_Socialist_swastika.svg/960px-National_Socialist_swastika.svg.png" 
+                        alt="Logo" 
+                        class="w-full h-full object-contain"
+                    />
                 </div>
             </div>
+            
+            <h1 class="text-5xl sm:text-6xl md:text-7xl font-black gradient-text leading-tight font-['Orbitron']">
+                .Winn
+            </h1>
+            <div class="text-2xl sm:text-3xl md:text-4xl font-bold text-white mt-4 font-['Orbitron']">
+                <span id="animatedTitleHero" class="inline-block">[ / ] .Winn</span>
+            </div>
+            <p class="text-gray-400 text-lg sm:text-xl max-w-2xl mx-auto mt-4 font-light">
+                The ultimate game enhancement suite.<br />
+                Built for performance, designed for excellence.
+            </p>
+            <div class="flex flex-wrap justify-center gap-4 mt-8">
+                <a href="#download" class="btn-download-premium text-white px-8 py-3.5 rounded-xl text-lg font-bold shadow-lg shadow-cyan-500/20 inline-flex items-center gap-2">
+                    Download Now
+                </a>
+            </div>
+            <div class="mt-6 text-sm text-gray-500">
+                <span class="inline-flex items-center gap-2">
+                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                    Free  ·  No hidden fees  ·  Lifetime updates
+                </span>
+            </div>
+        </div>
+    </header>
 
-            <div class="profile-right">
-                <div class="name-row">
-                    <span class="username" id="displayName">lmajed</span>
-                    <div class="premium-star">
-                        <svg viewBox="0 0 24 24">
-                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                        </svg>
-                    </div>
+    <!-- ====== GAMES GRID ====== -->
+    <section id="games" class="py-16 px-4 scroll-mt-20">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-12">
+                <span class="text-pink-500 text-sm font-bold uppercase tracking-wider font-['Orbitron']">Supported Games</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-white mt-2">Works With Your Favorites</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto mt-3">
+                    One tool, multiple games. Constantly updated to support the latest titles.
+                </p>
+            </div>
+
+            <div class="game-grid">
+                <!-- Red Dead Redemption 2 - Active -->
+                <div class="game-card" style="border-color: rgba(34, 197, 94, 0.3);">
+                    <span class="icon">RDR2</span>
+                    <span class="name">Red Dead Redemption 2</span>
+                    <span class="status status-active">● Active</span>
                 </div>
-                <div class="join-date">joined 2002/04/17</div>
 
-                <div class="info-card">
-                    <div class="info-left">
-                        <i class="fab fa-discord info-icon"></i>
-                        <div class="info-details">
-                            <div class="info-title">Reaper Community</div>
-                            <div class="info-sub">397 online · 3.3K members</div>
-                        </div>
-                    </div>
-                    <a class="info-button" href="https://discord.gg/d-h" target="_blank">Join</a>
+                <!-- All other games - Coming Soon -->
+                <div class="game-card">
+                    <span class="icon">GTAV</span>
+                    <span class="name">Grand Theft Auto V</span>
+                    <span class="status status-coming">● Coming Soon</span>
                 </div>
-
-                <div class="info-card" id="personalDiscordCard">
-                    <div class="info-left">
-                        <div id="discordAvatarSmall">
-                            <div class="avatar-small-placeholder">?</div>
-                        </div>
-                        <div class="info-details">
-                            <div class="info-title" id="discordDisplayName">65u5</div>
-                            <div class="info-sub" id="discordUsername">@65u5</div>
-                            <div class="status-badge">
-                                <span class="status-dot-dnd"></span>
-                                <span class="status-text-dnd" id="discordStatus">DND</span>
-                            </div>
-                        </div>
-                    </div>
-                    <a class="info-button" href="https://discord.com/users/932784788534886410" target="_blank">Msg</a>
+                <div class="game-card">
+                    <span class="icon">ER</span>
+                    <span class="name">Elden Ring</span>
+                    <span class="status status-coming">● Coming Soon</span>
                 </div>
-
-                <div class="social-links">
-                    <a class="social-circle" href="https://majed.win/" target="_blank">
-                        <i class="fas fa-globe" style="color: #b0b0b0;"></i>
-                    </a>
-                    <a class="social-circle" href="https://youtube.com/@2002_Majed" target="_blank">
-                        <i class="fab fa-youtube" style="color: #ff2a2a;"></i>
-                    </a>
-                    <a class="social-circle" href="https://tiktok.com/@majed.alshmry" target="_blank">
-                        <i class="fab fa-tiktok"></i>
-                    </a>
+                <div class="game-card">
+                    <span class="icon">COD</span>
+                    <span class="name">Call of Duty</span>
+                    <span class="status status-coming">● Coming Soon</span>
+                </div>
+                <div class="game-card">
+                    <span class="icon">AC</span>
+                    <span class="name">Assassin's Creed</span>
+                    <span class="status status-coming">● Coming Soon</span>
+                </div>
+                <div class="game-card">
+                    <span class="icon">FH5</span>
+                    <span class="name">Forza Horizon 5</span>
+                    <span class="status status-coming">● Coming Soon</span>
+                </div>
+                <div class="game-card">
+                    <span class="icon">CP77</span>
+                    <span class="name">Cyberpunk 2077</span>
+                    <span class="status status-coming">● Coming Soon</span>
+                </div>
+                <div class="game-card">
+                    <span class="icon">SOT</span>
+                    <span class="name">Sea of Thieves</span>
+                    <span class="status status-coming">● Coming Soon</span>
+                </div>
+                <div class="game-card">
+                    <span class="icon">HL</span>
+                    <span class="name">Hogwarts Legacy</span>
+                    <span class="status status-coming">● Coming Soon</span>
+                </div>
+                <div class="game-card">
+                    <span class="icon">TW3</span>
+                    <span class="name">The Witcher 3</span>
+                    <span class="status status-coming">● Coming Soon</span>
+                </div>
+                <div class="game-card">
+                    <span class="icon">BF</span>
+                    <span class="name">Battlefield 2042</span>
+                    <span class="status status-coming">● Coming Soon</span>
+                </div>
+                <div class="game-card">
+                    <span class="icon">MC</span>
+                    <span class="name">Minecraft</span>
+                    <span class="status status-coming">● Coming Soon</span>
+                </div>
+                <div class="game-card">
+                    <span class="icon">FN</span>
+                    <span class="name">Fortnite</span>
+                    <span class="status status-coming">● Coming Soon</span>
+                </div>
+                <div class="game-card">
+                    <span class="icon">APEX</span>
+                    <span class="name">Apex Legends</span>
+                    <span class="status status-coming">● Coming Soon</span>
+                </div>
+                <div class="game-card">
+                    <span class="icon">VAL</span>
+                    <span class="name">Valorant</span>
+                    <span class="status status-coming">● Coming Soon</span>
+                </div>
+                <div class="game-card">
+                    <span class="icon">CS2</span>
+                    <span class="name">Counter-Strike 2</span>
+                    <span class="status status-coming">● Coming Soon</span>
+                </div>
+                <div class="game-card">
+                    <span class="icon">OW</span>
+                    <span class="name">Overwatch 2</span>
+                    <span class="status status-coming">● Coming Soon</span>
+                </div>
+                <div class="game-card">
+                    <span class="icon">R6</span>
+                    <span class="name">Rainbow Six Siege</span>
+                    <span class="status status-coming">● Coming Soon</span>
+                </div>
+                <div class="game-card">
+                    <span class="icon">PUBG</span>
+                    <span class="name">PUBG</span>
+                    <span class="status status-coming">● Coming Soon</span>
+                </div>
+                <div class="game-card">
+                    <span class="icon">TLOU</span>
+                    <span class="name">The Last of Us</span>
+                    <span class="status status-coming">● Coming Soon</span>
+                </div>
+                <div class="game-card">
+                    <span class="icon">HZD</span>
+                    <span class="name">Horizon Zero Dawn</span>
+                    <span class="status status-coming">● Coming Soon</span>
+                </div>
+                <div class="game-card">
+                    <span class="icon">GOW</span>
+                    <span class="name">God of War</span>
+                    <span class="status status-coming">● Coming Soon</span>
+                </div>
+                <div class="game-card">
+                    <span class="icon">SM</span>
+                    <span class="name">Spider-Man</span>
+                    <span class="status status-coming">● Coming Soon</span>
+                </div>
+                <div class="game-card">
+                    <span class="icon">FF</span>
+                    <span class="name">Final Fantasy</span>
+                    <span class="status status-coming">● Coming Soon</span>
+                </div>
+                <div class="game-card">
+                    <span class="icon">DS</span>
+                    <span class="name">Dark Souls</span>
+                    <span class="status status-coming">● Coming Soon</span>
+                </div>
+                <div class="game-card">
+                    <span class="icon">SK</span>
+                    <span class="name">Sekiro</span>
+                    <span class="status status-coming">● Coming Soon</span>
+                </div>
+                <div class="game-card">
+                    <span class="icon">RE</span>
+                    <span class="name">Resident Evil</span>
+                    <span class="status status-coming">● Coming Soon</span>
+                </div>
+                <div class="game-card">
+                    <span class="icon">DMC</span>
+                    <span class="name">Devil May Cry</span>
+                    <span class="status status-coming">● Coming Soon</span>
+                </div>
+                <div class="game-card">
+                    <span class="icon">MGS</span>
+                    <span class="name">Metal Gear Solid</span>
+                    <span class="status status-coming">● Coming Soon</span>
+                </div>
+                <div class="game-card">
+                    <span class="icon">... </span>
+                    <span class="name">And Many More</span>
+                    <span class="status status-coming">● Coming Soon</span>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
+    <!-- ====== FEATURES ====== -->
+    <section id="features" class="py-16 px-4 scroll-mt-20 bg-[#0d0d0d]">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-12">
+                <span class="text-pink-500 text-sm font-bold uppercase tracking-wider font-['Orbitron']">Features</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-white mt-2">Premium Features, Zero Cost</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto mt-3">
+                    Experience the best tools without spending a dime.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="card-premium rounded-2xl p-7">
+                    <div class="mb-4 inline-block p-3 rounded-xl bg-pink-500/10">
+                        <svg class="w-7 h-7 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Lightning Fast</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Optimized for performance with zero lag. Works seamlessly with your system.</p>
+                </div>
+
+                <div class="card-premium rounded-2xl p-7">
+                    <div class="mb-4 inline-block p-3 rounded-xl bg-pink-500/10">
+                        <svg class="w-7 h-7 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">100% Safe</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Clean, verified, and trusted by thousands of users worldwide.</p>
+                </div>
+
+                <div class="card-premium rounded-2xl p-7">
+                    <div class="mb-4 inline-block p-3 rounded-xl bg-pink-500/10">
+                        <svg class="w-7 h-7 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a5 5 0 010-7.072m0 0l2.829 2.829" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Always Updated</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Regular updates to keep you ahead. Community-driven improvements.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== DOWNLOAD SECTION ====== -->
+    <section id="download" class="py-16 px-4 scroll-mt-20">
+        <div class="max-w-4xl mx-auto text-center">
+            <span class="text-pink-500 text-sm font-bold uppercase tracking-wider font-['Orbitron']">Download</span>
+            <h2 class="text-3xl md:text-4xl font-bold text-white mt-2">Download .Winn</h2>
+            <p class="text-gray-400 max-w-xl mx-auto mt-3">
+                Completely free. No registration. No hidden costs. Just click and enjoy.
+            </p>
+
+            <div class="mt-8 card-premium rounded-2xl p-8 glow-border">
+                <div class="flex flex-col items-center gap-6">
+                    <div class="flex items-center gap-4">
+                        <div class="logo-container w-16 h-16">
+                            <img 
+                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/National_Socialist_swastika.svg/960px-National_Socialist_swastika.svg.png" 
+                                alt="Logo" 
+                                class="w-full h-full object-contain"
+                            />
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-white font-['Orbitron']">.Winn</h3>
+                            <p class="text-gray-400 text-sm">Version 2.1.0  ·  15 MB</p>
+                        </div>
+                    </div>
+
+                    <a
+                        href="https://www.mediafire.com/file/pxvjl5buhs5rr3l/Menu.exe/file"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="btn-download-premium text-white px-12 py-4 rounded-xl text-xl font-bold shadow-lg shadow-cyan-500/30 inline-flex items-center gap-3"
+                    >
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        Download Now
+                    </a>
+
+                    <p class="text-gray-500 text-xs flex items-center gap-2">
+                        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                        Virus-free  ·  100% clean  ·  Trusted by 10,000+ users
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== CTA ====== -->
+    <section class="py-16 px-4">
+        <div class="max-w-4xl mx-auto text-center card-premium rounded-3xl p-10 glow-border">
+            <h2 class="text-3xl md:text-4xl font-bold text-white">Ready to level up?</h2>
+            <p class="text-gray-400 max-w-xl mx-auto mt-3">
+                Join thousands of satisfied users. Download .Winn today — completely free.
+            </p>
+            <div class="flex flex-wrap justify-center gap-4 mt-6">
+                <a
+                    href="https://www.mediafire.com/file/pxvjl5buhs5rr3l/Menu.exe/file"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn-download-premium text-white px-10 py-3.5 rounded-xl text-lg font-bold shadow-lg shadow-cyan-500/30 inline-flex items-center gap-2"
+                >
+                    Download Free
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== FOOTER ====== -->
+    <footer class="border-t border-[#1a1a1a] pt-8 pb-4 px-4 mt-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="logo-container w-8 h-8">
+                            <img 
+                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/National_Socialist_swastika.svg/960px-National_Socialist_swastika.svg.png" 
+                                alt="Logo" 
+                                class="w-full h-full object-contain"
+                            />
+                        </div>
+                        <span class="text-white font-bold font-['Orbitron'] text-sm">.Winn</span>
+                    </div>
+                    <p class="text-gray-500 text-sm">Free enhancement suite for gamers.</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-3">Quick Links</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white transition">Home</a></li>
+                        <li><a href="#games" class="hover:text-white transition">Games</a></li>
+                        <li><a href="#features" class="hover:text-white transition">Features</a></li>
+                        <li><a href="#download" class="hover:text-white transition">Download</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-3">Support</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white transition">FAQ</a></li>
+                        <li><a href="#" class="hover:text-white transition">Contact</a></li>
+                        <li><a href="#" class="hover:text-white transition">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-3">Follow</h4>
+                    <div class="flex gap-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition text-sm font-semibold">X</a>
+                        <a href="#" class="text-gray-400 hover:text-white transition text-sm font-semibold">IG</a>
+                        <a href="#" class="text-gray-400 hover:text-white transition text-sm font-semibold">DC</a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-[#1a1a1a] mt-8 pt-4 text-center text-gray-500 text-sm">
+                © 2026 .Winn. All rights reserved. 100% Free.
+            </div>
+        </div>
+    </footer>
+
+    <!-- ====== SCRIPT ====== -->
     <script>
-        (function(){
-            var overlay = document.getElementById('blurOverlay');
-            var mainContent = document.getElementById('mainContent');
-            var audioPlayer = document.getElementById('bgAudio');
-            
-            function removeOverlay(){
-                if(overlay){
-                    overlay.classList.add('hidden');
-                    setTimeout(function(){
-                        if(overlay && overlay.remove) overlay.remove();
-                    }, 400);
-                }
-                if(mainContent) mainContent.style.opacity = '1';
-                if(audioPlayer){
-                    audioPlayer.volume = 0.4;
-                    audioPlayer.play().catch(function(){});
-                }
-                document.removeEventListener('click', removeOverlay);
-                document.removeEventListener('touchstart', removeOverlay);
-                document.removeEventListener('keydown', removeOverlay);
-            }
-            
-            document.addEventListener('click', removeOverlay);
-            document.addEventListener('touchstart', removeOverlay);
-            document.addEventListener('keydown', removeOverlay);
-            
-            var audioEl = document.getElementById('bgAudio');
-            if(audioEl) audioEl.volume = 0.4;
-            
-            (function(){
-                document.addEventListener('contextmenu', function(e){ e.preventDefault(); return false; });
-                document.addEventListener('copy', function(e){ e.preventDefault(); return false; });
-                document.addEventListener('cut', function(e){ e.preventDefault(); return false; });
-                document.addEventListener('paste', function(e){ e.preventDefault(); return false; });
-                document.addEventListener('selectstart', function(e){ e.preventDefault(); return false; });
-                document.addEventListener('dragstart', function(e){ e.preventDefault(); return false; });
-                document.addEventListener('keydown', function(e){
-                    if(e.key === 'F12' || e.keyCode === 123){ e.preventDefault(); return false; }
-                    if(e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')){ e.preventDefault(); return false; }
-                    if(e.ctrlKey && e.key === 'u'){ e.preventDefault(); return false; }
-                    if(e.ctrlKey && e.key === 's'){ e.preventDefault(); return false; }
-                    if(e.ctrlKey && e.key === 'p'){ e.preventDefault(); return false; }
-                    if(e.ctrlKey && e.key === 'c'){ e.preventDefault(); return false; }
-                    if(e.ctrlKey && e.key === 'x'){ e.preventDefault(); return false; }
-                    if(e.ctrlKey && e.key === 'v'){ e.preventDefault(); return false; }
-                    if(e.ctrlKey && e.key === 'a'){ e.preventDefault(); return false; }
-                    if(e.key === 'PrintScreen' || e.keyCode === 44){ e.preventDefault(); return false; }
-                });
-                document.body.style.userSelect = 'none';
-                document.body.style.webkitUserSelect = 'none';
-                document.body.style.msUserSelect = 'none';
-                document.body.style.mozUserSelect = 'none';
-            })();
-            
-            (function(){
-                var base = "lmajed";
-                var frames = ['/', '-', '\\', '|'];
-                var step = 0, dir = 1, len = 1;
-                setInterval(function(){
-                    var ch = frames[step % frames.length];
-                    if(dir === 1){
-                        var txt = base.substring(0, len);
-                        if(len < base.length) len++; else dir = -1;
-                        document.title = "[ " + ch + " ] " + txt.padEnd(base.length, ' ') + " | Majed.win";
-                    } else {
-                        var txt = base.substring(0, len);
-                        if(len > 1) len--; else dir = 1;
-                        document.title = "[ " + ch + " ] " + txt.padEnd(base.length, ' ') + " | Majed.win";
-                    }
-                    step++;
-                }, 120);
-            })();
-            
-            var USER_ID = "932784788534886410";
-            var refreshTimer;
-            
-            async function fetchUserData(){
-                try{
-                    var ctrl = new AbortController();
-                    var timeout = setTimeout(() => ctrl.abort(), 7000);
-                    var res = await fetch(`https://api.lanyard.rest/v1/users/${USER_ID}`, { signal: ctrl.signal });
-                    clearTimeout(timeout);
-                    if(res.ok){
-                        var json = await res.json();
-                        if(json.success && json.data){
-                            var user = json.data.discord_user;
-                            if(user){
-                                var avatar = null;
-                                var display = user.global_name || user.username || "65u5";
-                                var tag = user.username || "65u5";
-                                if(user.avatar){
-                                    var ext = user.avatar.startsWith("a_") ? "gif" : "png";
-                                    avatar = `https://cdn.discordapp.com/avatars/${USER_ID}/${user.avatar}.${ext}?size=128`;
-                                }
-                                return { avatar, display, tag };
-                            }
-                        }
-                    }
-                } catch(e){}
-                try{
-                    var res2 = await fetch(`https://japi.rest/discord/v1/user/${USER_ID}`);
-                    if(res2.ok){
-                        var json2 = await res2.json();
-                        if(json2.data && json2.data.avatar){
-                            var u = json2.data;
-                            var ext = u.avatar.startsWith("a_") ? "gif" : "png";
-                            var avatar = `https://cdn.discordapp.com/avatars/${USER_ID}/${u.avatar}.${ext}?size=128`;
-                            var display = u.global_name || u.username || "65u5";
-                            var tag = u.username || "65u5";
-                            return { avatar, display, tag };
-                        }
-                    }
-                } catch(e){}
-                return { avatar: null, display: "65u5", tag: "65u5" };
-            }
-            
-            async function updateProfile(){
-                var data = await fetchUserData();
-                var avatarContainer = document.getElementById('avatarContainer');
-                if(avatarContainer){
-                    if(data.avatar){
-                        var existingImg = avatarContainer.querySelector('img');
-                        if(existingImg){
-                            if(existingImg.src !== data.avatar){
-                                existingImg.src = data.avatar;
-                            }
-                        } else {
-                            avatarContainer.innerHTML = `<img class="avatar" src="${data.avatar}" alt="avatar" draggable="false" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'default-avatar\'>${(data.display.charAt(0) || 'M').toUpperCase()}</div>';">`;
-                        }
-                    } else if(!avatarContainer.querySelector('.default-avatar')){
-                        avatarContainer.innerHTML = `<div class="default-avatar">${(data.display.charAt(0) || 'M').toUpperCase()}</div>`;
-                    }
-                }
-                var smallContainer = document.getElementById('discordAvatarSmall');
-                if(smallContainer){
-                    if(data.avatar){
-                        var existingSmall = smallContainer.querySelector('img');
-                        if(existingSmall){
-                            if(existingSmall.src !== data.avatar){
-                                existingSmall.src = data.avatar;
-                            }
-                        } else {
-                            smallContainer.innerHTML = `<img class="avatar-small" src="${data.avatar}" alt="avatar" draggable="false" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'avatar-small-placeholder\'>${(data.display.charAt(0) || '?').toUpperCase()}</div>';">`;
-                        }
-                    } else if(!smallContainer.querySelector('.avatar-small-placeholder')){
-                        smallContainer.innerHTML = `<div class="avatar-small-placeholder">${(data.display.charAt(0) || '?').toUpperCase()}</div>`;
-                    }
-                }
-                var nameSpan = document.getElementById('discordDisplayName');
-                var userSpan = document.getElementById('discordUsername');
-                if(nameSpan && nameSpan.textContent !== data.display){
-                    nameSpan.textContent = data.display;
-                }
-                if(userSpan && userSpan.textContent !== `@${data.tag}`){
-                    userSpan.textContent = `@${data.tag}`;
-                }
-            }
-            
-            updateProfile();
-            refreshTimer = setInterval(updateProfile, 15000);
-        })();
-        
-        (function(){
-            var card = document.getElementById('tiltCard');
-            if(!card) return;
-            var container = card.parentElement;
-            var rect = container.getBoundingClientRect();
-            window.addEventListener('resize', function(){ rect = container.getBoundingClientRect(); });
-            container.addEventListener('mousemove', function(e){
-                var x = e.clientX - rect.left;
-                var y = e.clientY - rect.top;
-                var cx = rect.width / 2;
-                var cy = rect.height / 2;
-                var rx = ((y - cy) / cy) * 10;
-                var ry = ((x - cx) / cx) * 10;
-                card.style.transform = `perspective(1000px) rotateX(${-rx}deg) rotateY(${ry}deg) translateZ(3px)`;
+        // Mobile Menu Toggle
+        document.getElementById('menuBtn').addEventListener('click', function() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        });
+
+        // Close menu on link click
+        document.querySelectorAll('#mobileMenu a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('mobileMenu').classList.add('hidden');
             });
-            container.addEventListener('mouseleave', function(){
-                card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
+        });
+
+        // Animated Title
+        const frames = ['[ / ] .Winn', '[ - ] .Winn', '[ \\ ] .Winn', '[ | ] .Winn'];
+        let currentFrame = 0;
+        const titleElement = document.getElementById('animatedTitle');
+        const heroTitleElement = document.getElementById('animatedTitleHero');
+
+        function updateTitle() {
+            currentFrame = (currentFrame + 1) % frames.length;
+            const text = frames[currentFrame];
+            
+            if (titleElement) {
+                titleElement.textContent = text;
+            }
+            if (heroTitleElement) {
+                heroTitleElement.textContent = text;
+            }
+        }
+
+        setInterval(updateTitle, 300);
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
             });
-        })();
+        });
     </script>
+
 </body>
 </html>
